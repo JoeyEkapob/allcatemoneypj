@@ -1,8 +1,10 @@
+@import "@fontsource/kanit"; /* โหลดฟอนต์ Kanit */
+
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-@import "@fontsource/kanit"; /* โหลดฟอนต์ Kanit */
-@import "@fontsource/kanit/300.css"; /* น้ำหนัก 300 */
-@import "@fontsource/kanit/400.css"; /* น้ำหนัก 400 */
-@import "@fontsource/kanit/700.css"; /* น้ำหนัก 700 */
+body {
+    font-family: 'Kanit', sans-serif;
+  }

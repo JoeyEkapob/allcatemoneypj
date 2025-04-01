@@ -3,7 +3,7 @@ import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/solid";
 
 const InputField = ({ label, type, value, onChange, error }) => (
   <div>
-    <label className="font-sans  block text-gray-700">{label}</label>
+    <label className=" block text-gray-700">{label}</label>
     <input
       type={type}
       value={value}
@@ -58,9 +58,8 @@ const LoginPage = () => {
   return (
    
     <div className="flex min-h-screen items-center justify-center bg-gray-100">
-      
       <div className="w-full max-w-md p-6 bg-white rounded-2xl shadow-lg">
-        <h2 className="font-sans text-2xl font-bold text-center text-gray-800 mb-6 ">
+        <h2 className="font-kanit text-2xl font-semibold text-center text-gray-800 mb-6 ">
           เข้าสู่ระบบ
         </h2>
     
