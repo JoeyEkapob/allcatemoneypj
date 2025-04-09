@@ -8,7 +8,7 @@ const InputField = ({ label, type, value, onChange, error }) => (
       type={type}
       value={value}
       onChange={onChange}
-      className="w-full p-2 border border-gray-500 rounded-sm mt-1 focus:outline-none focus:ring-2 focus:ring-blue-400"
+      className="w-full p-2 border border-gray-500 rounded-lg mt-1 focus:outline-none focus:ring-2 focus:ring-blue-400"
     />
     {error && <span className="text-red-500 text-sm">{error}</span>}
   </div>
@@ -21,7 +21,7 @@ const PasswordField = ({ label, type, value, onChange, error }) => (
       type={type}
       value={value}
       onChange={onChange}
-      className="w-full p-2 border border-gray-500 rounded-sm mt-1 focus:outline-none focus:ring-2 focus:ring-blue-400"
+      className="w-full p-2 border border-gray-500 rounded-lg  mt-1 focus:outline-none focus:ring-2 focus:ring-blue-400"
     />
     {error && <span className="text-red-500 text-sm">{error}</span>}
   </div>
@@ -47,7 +47,7 @@ const LoginPage = () => {
   
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(validate())
+    /* console.log(validate()) */
   if (validate()) {
         
         console.log("เข้าสู่ระบบสำเร็จ!");
