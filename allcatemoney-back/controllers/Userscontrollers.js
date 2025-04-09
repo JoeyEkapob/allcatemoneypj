@@ -16,7 +16,7 @@ module.exports ={
                 [username , hash, fullname , phone, custom_id , email]
             )
         
-
+            
             const userid = userresult.rows[0].id
      
             await pool.query(`INSERT INTO user_roles (user_id,role_id) VALUES ( $1,$2)`,[userid,1])
@@ -64,15 +64,15 @@ module.exports ={
                 process.env.JWT_SECRET,{expiresIn:process.env.JWT_EXPIRES_IN}
             )
 
-            return console.log(req.headers['user-agent'] || 'unknown')
+            /* return console.log(req.headers['user-agent'] || 'unknown') */
 
-          /*  await pool.query(
+        await pool.query(
                 `INSERT INTO user_sessions (user_id,session_token,ip_address,user_agent,expires_at,created_at)
                 VALUES ($1,$2,$3,$4,NOW() + interval '1 day',NOW())`,
                 [user.id , token , req.ip || 'unknown', req.headers['user-agent'] || 'unknown']
             )
 
-            await pool.query(`INSERT INTO user_activity_logs ( user_id, action , detail ,created_at ) VALUES ($1,$2,$3,NOW())`,
+            await pool.query(`INSERT INTO user_activity_logs ( user_id, action , details ,created_at ) VALUES ($1,$2,$3,NOW())`,
                 [user.id,'login','User logged in successfully']
             )
 
@@ -85,7 +85,7 @@ module.exports ={
                     fullname:user.fullname,
                     email:user.email,
                 }
-            }) */
+            }) 
         }catch(e){
             console.error(e);
             res.status(500).json({ error: 'Internal server error' });
