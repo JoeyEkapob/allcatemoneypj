@@ -1,6 +1,8 @@
 const pool = require('./config/db')
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+
+
 module.exports ={ 
     register : async (req,res)=>{
         const { username , password , fullname , phone , email, custom_id} = req.body
