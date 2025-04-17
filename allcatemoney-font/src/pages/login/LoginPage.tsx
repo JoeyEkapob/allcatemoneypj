@@ -1,5 +1,8 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/solid";
+import config from "../../config";
+import { useNavigate } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
 
 const InputField = ({ label, type, value, onChange, error }) => (
   <div>
@@ -32,28 +35,61 @@ const LoginPage = () => {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState({ email: "", password: "" });
+  const navigate = useNavigate();
 
-   const validate = () => {
-      const newErrors = { email: "", password: "" };
+  useEffect(()=>{
+    const token = localStorage.getItem("token")
+    if(token){
+      try{
+      
+        const decoded = jwtDecode<JwtPayload>(token);
+
+        const currentTime = Date.now() / 1000
+        if (decoded.exp > currentTime) {
+          navigate("/home");
+        }
+      }catch(e){
+        console.log("Invalid token")
+      }
+    }else{
+      navigate("/")
+    }
+  },[])
+
+
+  const validate = () => {
+      const newErrors = { username: "", password: "" };
   
-      if (!username.trim()) newErrors.email = "กรุณากรอก ID";
+      if (!username.trim()) newErrors.username = "กรุณากรอก ID";
       if (!password.trim()) newErrors.password = "กรุณากรอกรหัสผ่าน";
   
       setErrors(newErrors);
-  
-  
-      return !newErrors.email && !newErrors.password;
+
+      return !newErrors.username && !newErrors.password;
     };
-  
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+   
     /* console.log(validate()) */
   if (validate()) {
-        
-        console.log("เข้าสู่ระบบสำเร็จ!");
+       try{
+        //console.log("เข้าสู่ระบบสำเร็จ!");
+        const result =  await fetch("http://localhost:5000/user/login",{
+          method:"POST",
+          headers:config.headers,
+          body:JSON.stringify({ username , password })
+
+        })
+        const data = await result.json();
+
+        localStorage.setItem("token",data.token)
+        navigate("/home");
+
+       }catch(e){
+        console.error(e)
+       }   
       } 
   };
-
 
   return (
    
@@ -69,7 +105,7 @@ const LoginPage = () => {
             type="text"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
-            error={errors.email}
+            error={errors.username}
           />
 
           <div className="mt-4 relative">
