@@ -10,6 +10,7 @@ const pool = new Pool({
   password: process.env.DB_PASS,
   port: process.env.DB_PORT,
 });
+
   pool.connect((err) => {
     if (err) console.error("❌ Database Connection Error:", err);
     else console.log("✅ Connected to PostgreSQL");
