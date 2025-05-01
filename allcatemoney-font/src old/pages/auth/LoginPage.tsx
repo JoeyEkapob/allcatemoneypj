@@ -4,26 +4,6 @@ import { useNavigate } from "react-router-dom";
 import { jwtDecode  , JwtPayload } from "jwt-decode";
 
 
-interface InputProps {
-  label: string;
-  type: string;
-  value: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  error?: string;
-}
-
-const InputField: React.FC<InputProps> = ({ label, type, value, onChange, error }) => (
-  <div>
-    <label className="block text-gray-700">{label}</label>
-    <input
-      type={type}
-      value={value}
-      onChange={onChange}
-      className="w-full p-2 border border-gray-500 rounded-lg mt-1 focus:outline-none focus:ring-2 focus:ring-blue-400"
-    />
-    {error && <span className="text-red-500 text-sm">{error}</span>}
-  </div>
-);
 
 const LoginPage: React.FC = () => {
   const [username, setUsername] = useState("");
@@ -42,7 +22,11 @@ const LoginPage: React.FC = () => {
         if (decoded.exp && decoded.exp > currentTime) {
           navigate("/home");
         }
+<<<<<<< HEAD:allcatemoney-font/src old/pages/auth/LoginPage.tsx
       } catch{
+=======
+      } catch {
+>>>>>>> c2db1fe33db0fc3d4e9b86eca3daaf9627223a73:allcatemoney-font/src/pages/auth/LoginPage.tsx
         console.error("Invalid token");
       }
     } else {
@@ -89,22 +73,28 @@ const LoginPage: React.FC = () => {
         </h2>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          <InputField
-            label="อีเมล"
-            type="text"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            error={errors.username}
-          />
+        <div>
+            <label className="block text-gray-700">ชื่อผู้ใช้</label>
+            <input
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              className="w-full p-2 border border-gray-500 rounded-lg mt-1 focus:outline-none focus:ring-2 focus:ring-blue-400"
+            />
+            {errors.username && <span className="text-red-500 text-sm">{errors.username}</span>}
+          </div>
 
           <div className="relative mt-4">
-            <InputField
-              label="รหัสผ่าน"
+          
+            <label className="block text-gray-700">รหัสผ่าน</label>
+            <input
               type={showPassword ? "text" : "password"}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              error={errors.password}
+              className="w-full p-2 border border-gray-500 rounded-lg mt-1 focus:outline-none focus:ring-2 focus:ring-blue-400"
             />
+            {errors.password && <span className="text-red-500 text-sm">{errors.password}</span>}
+          
             <button
               type="button"
               className="absolute right-3 top-9 text-gray-500"
