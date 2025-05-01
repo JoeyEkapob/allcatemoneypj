@@ -42,7 +42,7 @@ const LoginPage: React.FC = () => {
         if (decoded.exp && decoded.exp > currentTime) {
           navigate("/home");
         }
-      } catch (e ) {
+      } catch{
         console.error("Invalid token");
       }
     } else {

@@ -1,0 +1,12 @@
+@import "@fontsource/kanit"; /* โหลดฟอนต์ Kanit */
+@import "@fontsource/kanit/300.css";
+@import "@fontsource/kanit/400.css";
+@import "@fontsource/kanit/700.css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+    font-family: 'Kanit', sans-serif;
+  }
