@@ -14,7 +14,6 @@ export default function SignInForm() {
   const [isChecked, setIsChecked] = useState(false);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [error , setError] = useState(false);
   const [errorstext , setErrorstext] = useState({username : "",password : ""})
   const navigate = useNavigate()
 
@@ -39,10 +38,11 @@ useEffect(()=>{
 const vaildate = () => {
   const newErrors = {username:"",password:""}
   if(!username.trim()) newErrors.username= "กรุณากรอก ID" ; 
-  if(!password.trim()) newErrors.password= "กรุณากรอกรหัสผ่าน"
-  console.log(newErrors)
+  if(!password.trim()) newErrors.password= "กรุณากรอกรหัสผ่าน";
   setErrorstext(newErrors)
-  setError(true)
+
+  console.log(newErrors,!!newErrors.username)
+
   return !newErrors.username && !newErrors.password
 }
 
@@ -158,7 +158,8 @@ const handleSubmit = async (e:React.FormEvent) => {
                   onChange={(e) => setUsername(e.target.value)}
                   placeholder="กรุณากรอกอีเมลล์ของคุณ" 
                   hint={errorstext.username}
-                  error={error}
+                  error={!!errorstext.username}
+              
             
                   />
                 </div>
@@ -171,9 +172,10 @@ const handleSubmit = async (e:React.FormEvent) => {
                       type={showPassword ? "text" : "password"}
                       onChange={(e)=> setPassword(e.target.value)}
                       placeholder="กรุณากรอกรหัสผ่านของคุณ"
-                      hint={errorstext.password }
-                      error={error}
-                      
+                      hint={errorstext.password}
+                      error={!!errorstext.password}
+
+                        
                     />
                     <span
                       onClick={() => setShowPassword(!showPassword)}
