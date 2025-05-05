@@ -3,11 +3,13 @@ import { Link } from "react-router";
 import { EyeCloseIcon, EyeIcon } from "../../icons";
 import { jwtDecode  , JwtPayload } from "jwt-decode";
 import { useNavigate } from "react-router";
+import { useLoading } from '../../context/LoadingContext';
 
 import Label from "../form/Label";
 import Input from "../form/input/InputField";
 import Checkbox from "../form/input/Checkbox";
 import Button from "../ui/button/Button";
+
 
 export default function SignInForm() {
   const [showPassword, setShowPassword] = useState(false);
@@ -15,6 +17,7 @@ export default function SignInForm() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [errorstext , setErrorstext] = useState({username : "",password : ""})
+  const {showLoading, hideLoading } = useLoading();
   const navigate = useNavigate()
 
 useEffect(()=>{
@@ -39,9 +42,10 @@ const vaildate = () => {
   const newErrors = {username:"",password:""}
   if(!username.trim()) newErrors.username= "กรุณากรอก ID" ; 
   if(!password.trim()) newErrors.password= "กรุณากรอกรหัสผ่าน";
+  
   setErrorstext(newErrors)
 
-  console.log(newErrors,!!newErrors.username)
+  /* console.log(newErrors,!!newErrors.username) */
 
   return !newErrors.username && !newErrors.password
 }
@@ -60,10 +64,16 @@ const handleSubmit = async (e:React.FormEvent) => {
     })
     const data = await res.json()
     if(data.token){
-      localStorage.setItem("token",data.token)
-      navigate('/home')
+      showLoading();
+      
+      await new Promise(resolve => setTimeout(resolve, 10000));
+
+      navigate('/home');
+     /*  localStorage.setItem("token",data.token)
+      navigate('/loading') */
     }
   }catch(error){
+      hideLoading();
       console.error("Login failed", error);
   }
 
