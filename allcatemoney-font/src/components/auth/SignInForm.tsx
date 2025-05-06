@@ -19,6 +19,8 @@ export default function SignInForm() {
   const [errorstext , setErrorstext] = useState({username : "",password : ""})
   const {showLoading, hideLoading } = useLoading();
   const navigate = useNavigate()
+  const newErrors = {username:"",password:""}
+
 
 useEffect(()=>{
   const token = localStorage.getItem("token")
@@ -39,7 +41,6 @@ useEffect(()=>{
 },[navigate])
 
 const vaildate = () => {
-  const newErrors = {username:"",password:""}
   if(!username.trim()) newErrors.username= "กรุณากรอก ID" ; 
   if(!password.trim()) newErrors.password= "กรุณากรอกรหัสผ่าน";
   
@@ -55,22 +56,38 @@ const handleSubmit = async (e:React.FormEvent) => {
   if(!vaildate()) return;
 
   try{
-    const res = await fetch("http://localhost:5000/user/login",{
+    showLoading();
+    const [res] = await Promise.all([fetch("http://localhost:5000/user/login",{
       method:"POST",
       headers:{
         "Content-Type":"application/json",
       },
       body: JSON.stringify({username,password}),
-    })
+    }),new Promise((resolve)=>setTimeout(resolve,1000)) 
+  ]) 
+     
     const data = await res.json()
-    if(data.token){
-      showLoading();
-      
-      await new Promise(resolve => setTimeout(resolve, 10000));
-
+  
+    if(data.success){
+    //  localStorage.setItem("token",data.token)
+      hideLoading();
       navigate('/home');
-     /*  localStorage.setItem("token",data.token)
-      navigate('/loading') */
+    }else{
+
+      if(data.usernameerror){
+        hideLoading()
+        return newErrors.username = data.usernameerror ; 
+   
+      
+      }else if(data.passworderror){
+        hideLoading()
+        return newErrors.password = data.passworderror ; 
+        
+       
+      }else{
+        hideLoading()
+        return newErrors.username = 'error 600',  newErrors.password = 'error 600'
+      }
     }
   }catch(error){
       hideLoading();

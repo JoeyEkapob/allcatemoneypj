@@ -38,23 +38,13 @@ module.exports ={
             const userresult = await pool.query(
                 `SELECT * FROM users WHERE username = $1`,[username]
             )
-           
-           
           if(userresult.rowCount === 0) {
-                return res.status(401).json({message:'ไม่พบผู้ใช้งาน'})
+                return res.status(200).json({  success: false, usernameerror:'ไม่พบผู้ใช้งาน'})
             }
-
             const user = userresult.rows[0]
-
-        
-
-
-             const ismatch = await bcrypt.compare(password,user.password_hash)
-
-       
-
+            const ismatch = await bcrypt.compare(password,user.password_hash)
             if(!ismatch){
-                return res.status(401).json({ message: "รหัสผ่านไม่ถูกต้อง" });
+                return res.status(200).json({ success: false, passworderror: "รหัสผ่านไม่ถูกต้อง" });
             }
 
             const token = jwt.sign(
@@ -79,6 +69,7 @@ module.exports ={
             )
 
             res.json({
+                success:true,
                 message:'Login successfull',
                 token,
                 user:{
