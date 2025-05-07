@@ -22,23 +22,7 @@ export default function SignInForm() {
   const newErrors = {username:"",password:""}
 
 
-useEffect(()=>{
-  const token = localStorage.getItem("token")
-  if(token){
-    try{
-      const decoded = jwtDecode<JwtPayload>(token);
-      const currentTime = Date.now() / 1000;
-      if(decoded.exp && decoded.exp > currentTime){
-        navigate("/home")
-      }
-    }catch{
-      console.error("Invalid token");
-    }
-    
-  }else {
-    navigate("/");
-  }
-},[navigate])
+
 
 const vaildate = () => {
   if(!username.trim()) newErrors.username= "กรุณากรอก ID" ; 
@@ -69,9 +53,11 @@ const handleSubmit = async (e:React.FormEvent) => {
     const data = await res.json()
   
     if(data.success){
-    //  localStorage.setItem("token",data.token)
+     localStorage.setItem("token",data.token)
       hideLoading();
-      navigate('/home');
+      // หลัง login สำเร็จ
+      navigate('/home', { replace: true }); // ✅ ลบประวัติ login ออกจาก history
+
     }else{
 
       if(data.usernameerror){
