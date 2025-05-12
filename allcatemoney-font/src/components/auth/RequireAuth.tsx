@@ -8,25 +8,31 @@ interface MytokenPayload extends JwtPayload {
 }
 
 const RequireAuth: React.FC =  () =>{
-    const token = localStorage.getItem('token')
+   const token = localStorage.getItem('token');
 
-    if(!token){
-        return <Navigate to="/" replace />
+
+  if (!token) {
+    return <Navigate to="/" replace />;
+  }
+
+  try {
+    const decoded = jwtDecode<MytokenPayload>(token);
+    const now = Date.now() / 1000;
+
+
+    if (decoded.exp < now) {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      console.log('token หมดอายุ');
+      return <Navigate to="/" replace />;
     }
-    try{
-        const decoded = jwtDecode<MytokenPayload>(token);
-        const now = Date.now() / 1000
 
-        if(decoded.exp < now){
-            return <Navigate to='/' replace />
-        }
-        return <Outlet />
 
-    }catch{
-
-        return <Navigate to="/" replace/>
-    }
-
-}
+    return <Outlet />;
+  } catch (err) {
+    console.log(err)
+    return <Navigate to="/" replace />;
+  }
+};
 
 export default RequireAuth;

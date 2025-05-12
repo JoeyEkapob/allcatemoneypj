@@ -4,6 +4,7 @@ import { EyeCloseIcon, EyeIcon } from "../../icons";
 import { jwtDecode  , JwtPayload } from "jwt-decode";
 import { useNavigate } from "react-router";
 import { useLoading } from '../../context/LoadingContext';
+import { useAuth } from '../auth/AuthContext';
 
 import Label from "../form/Label";
 import Input from "../form/input/InputField";
@@ -12,34 +13,59 @@ import Button from "../ui/button/Button";
 
 
 export default function SignInForm() {
+  const { login } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [errorstext , setErrorstext] = useState({username : "",password : ""})
+  const [errorstext, setErrorstext] = useState<{
+    username?: string;
+    password?: string;
+  }>({});
   const {showLoading, hideLoading } = useLoading();
   const navigate = useNavigate()
-  const newErrors = {username:"",password:""}
+  const newErrors: { username?: string; password?: string } = {};
+
 
 
 
 
 const vaildate = () => {
+  
   if(!username.trim()) newErrors.username= "กรุณากรอก ID" ; 
   if(!password.trim()) newErrors.password= "กรุณากรอกรหัสผ่าน";
   
-  setErrorstext(newErrors)
-
-  /* console.log(newErrors,!!newErrors.username) */
+  setErrorstext(newErrors);
 
   return !newErrors.username && !newErrors.password
 }
 
 const handleSubmit = async (e:React.FormEvent) => {
   e.preventDefault()
-  if(!vaildate()) return;
-
-  try{
+  
+  
+  if(!vaildate())  return ; 
+    try{
+      showLoading();
+      await login(username,password)
+      hideLoading();
+      navigate('/home',{replace:true})
+      
+    }catch(err :any){
+      if (err.field === 'username') {
+        
+        newErrors.username = err.message;
+        hideLoading();
+      } else if (err.field === 'password') {
+        newErrors.password = err.message;
+        hideLoading();
+      } else {
+        newErrors.username = 'เกิดข้อผิดพลาด';
+        hideLoading();
+      }
+      setErrorstext({ ...newErrors }); 
+    }
+  /* try{
     showLoading();
     const [res] = await Promise.all([fetch("http://localhost:5000/user/login",{
       method:"POST",
@@ -78,7 +104,7 @@ const handleSubmit = async (e:React.FormEvent) => {
   }catch(error){
       hideLoading();
       console.error("Login failed", error);
-  }
+  } */
 
 
 

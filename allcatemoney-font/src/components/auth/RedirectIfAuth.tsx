@@ -1,12 +1,33 @@
-import { Navigate,Outlet } from "react-router";
+import { jwtDecode } from "jwt-decode";
+import { Navigate,Outlet, replace } from "react-router";
+
+interface MytokenPayload{
+    exp:number
+}
 
 const RedirectIfAuth: React.FC = () => {
     
     const token = localStorage.getItem('token')
+   // console.log(token)
 
     if(token){
-        return <Navigate to='/home' replace/>
+        try{
+        const decode = jwtDecode<MytokenPayload>(token)
+        const now = Date.now() / 1000
+
+        if( decode.exp > now){
+            return <Navigate to='/home' replace />
+        }else{
+            localStorage.removeItem('token')
+            localStorage.removeItem('user')
+        }
+        }catch{
+            localStorage.removeItem('token')
+            localStorage.removeItem('user')
+        }
+       
     }
+    
     return <Outlet />
 }
 export default RedirectIfAuth;

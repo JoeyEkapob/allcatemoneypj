@@ -1,35 +1,59 @@
-import React , { createContext , useContext ,useState ,ReactNode } from "react";
-
-interface User {
-    id: number;
-    name:string;
-    email:string;
-}
+import { createContext, useContext, useState, ReactNode } from 'react';
+import { loginRequest, User } from './authService';
+import { Navigate } from 'react-router';
 
 interface AuthContextType {
-    user:User | null;
-    token:string | null;
-    login : (user:User,token:string) => void
-    logout:() => void
+  user: User | null;
+  token: string | null;
+  login: (email: string, password: string) => Promise<void>;
+  logout: () => void;
 }
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined)
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export const loginRequest = async (email:string ,password:string)=>{
-    const res = await fetch('/api/login',{
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({email,password})
-    })
-    if(!res){
-        return new Error('Login Failed')
+export const AuthProvider = ({ children }: { children: ReactNode }) => {
+  const [user, setUser] = useState<User | null>(() => {
+    const u = localStorage.getItem('user');
+    return u ? JSON.parse(u) : null;
+  });
 
+  const [token, setToken] = useState<string | null>(() => {
+    return localStorage.getItem('token');
+  });
+
+  const login = async (username: string, password: string) => {
+    try{
+      const { user, token } = await loginRequest(username, password);
+      setUser(user);
+      setToken(token);
+      localStorage.setItem('user', JSON.stringify(user));
+      localStorage.setItem('token', token);
+    }catch(err: any){
+      throw {
+        field: err.field || 'general',
+        message: err.message || 'เข้าสู่ระบบไม่สำเร็จ',
+      };
     }
+  };
 
-    const data = await res.json();
-    return {
-        user:data.user as User,
-        token:data.token as string
-    }
-}
+  const logout = () => {
+    setUser(null);
+    setToken(null);
+    localStorage.removeItem('user'); 
+    localStorage.removeItem('token'); 
 
+    //localStorage.clear(); // หรือเฉพาะ token/user
+  };
+
+  return (
+    <AuthContext.Provider value={{ user, token, login, logout }}>
+      {children}
+    </AuthContext.Provider>
+  );
+};
+
+export const useAuth = () => {
+  const ctx = useContext(AuthContext);
+  if (!ctx) throw new Error('useAuth must be used within AuthProvider');
+  return ctx;
+};

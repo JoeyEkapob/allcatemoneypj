@@ -34,17 +34,20 @@ module.exports ={
     },
     login: async (req,res)=>{
         const { username, password } = req.body;
+       // console.log(username,password)
         try{
             const userresult = await pool.query(
                 `SELECT * FROM users WHERE username = $1`,[username]
             )
           if(userresult.rowCount === 0) {
-                return res.status(200).json({  success: false, usernameerror:'ไม่พบผู้ใช้งาน'})
+
+                return res.status(200).json({  success: false, field: 'username', message:'ไม่พบผู้ใช้งาน'})
             }
             const user = userresult.rows[0]
             const ismatch = await bcrypt.compare(password,user.password_hash)
+
             if(!ismatch){
-                return res.status(200).json({ success: false, passworderror: "รหัสผ่านไม่ถูกต้อง" });
+                return res.status(200).json({ success: false, field: 'password',  message: "รหัสผ่านไม่ถูกต้อง" });
             }
 
             const token = jwt.sign(
@@ -58,7 +61,7 @@ module.exports ={
 
             /* return console.log(req.headers['user-agent'] || 'unknown') */
 
-        await pool.query(
+            await pool.query(
                 `INSERT INTO user_sessions (user_id,session_token,ip_address,user_agent,expires_at,created_at)
                 VALUES ($1,$2,$3,$4,NOW() + interval '1 day',NOW())`,
                 [user.id , token , req.ip || 'unknown', req.headers['user-agent'] || 'unknown']
@@ -68,14 +71,14 @@ module.exports ={
                 [user.id,'login','User logged in successfully']
             )
 
-            res.json({
+            return  res.json({
                 success:true,
                 message:'Login successfull',
                 token,
                 user:{
                     id:user.id,
                     username:user.username,
-                    fullname:user.fullname,
+                    fullname:user.full_name,
                     email:user.email,
                 }
             }) 

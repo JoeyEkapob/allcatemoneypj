@@ -7,16 +7,20 @@ import App from "./App.tsx";
 import { AppWrapper } from "./components/common/PageMeta.tsx";
 import { ThemeProvider } from "./context/ThemeContext.tsx";
 import { LoadingProvider } from "./context/LoadingContext.tsx";
+import { AuthProvider } from './components/auth/AuthContext';
+
 
 
 createRoot(document.getElementById("root")!).render(
-  <StrictMode>
+
      <LoadingProvider>
         <ThemeProvider>
-        <AppWrapper>
-          <App />
-        </AppWrapper>
+          <AuthProvider>
+            <AppWrapper>
+              <App />
+            </AppWrapper>
+        </AuthProvider>
       </ThemeProvider>
     </LoadingProvider>
-  </StrictMode>,
+ ,
 );
