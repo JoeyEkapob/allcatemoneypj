@@ -86,6 +86,9 @@ module.exports ={
             console.error(e);
             res.status(500).json({ error: 'Internal server error' });
         }
+    },
+    getuserprofile: async (req,res) =>{
+        return console.log('test')
     }
     
 }

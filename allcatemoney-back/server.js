@@ -27,5 +27,6 @@ app.get('/api', (req, res) => {
   });
 app.post('/users/register',(req,res)=>Userscontrollers.register(req,res))
 app.post('/user/login',(req,res)=>Userscontrollers.login(req,res))
+app.get('/userprofile',(req,res)=>Userscontrollers.getuserprofile(res,res))
 
 app.listen(5000, () => console.log('Server running on port 5000'));

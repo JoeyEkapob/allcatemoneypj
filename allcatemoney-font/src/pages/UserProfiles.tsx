@@ -3,8 +3,27 @@ import UserMetaCard from "../components/UserProfile/UserMetaCard";
 import UserInfoCard from "../components/UserProfile/UserInfoCard";
 import UserAddressCard from "../components/UserProfile/UserAddressCard";
 import PageMeta from "../components/common/PageMeta";
+import { useEffect, useState } from "react";
+import { getUserProfile } from "../components/api/userService";
+import { useLoading } from '../context/LoadingContext';
+
 
 export default function UserProfiles() {
+  const [profile, setProfile] = useState<any>(null);
+  const {showLoading, hideLoading } = useLoading();
+  
+
+  useEffect(() => {
+    showLoading()
+    getUserProfile()
+      .then(setProfile)
+      .catch(err => console.error('เกิดข้อผิดพลาด:', err.message));
+    hideLoading()
+  }, []);
+
+
+ if (!profile) ? showLoading() : hideLoading();  
+
   return (
     <>
       <PageMeta

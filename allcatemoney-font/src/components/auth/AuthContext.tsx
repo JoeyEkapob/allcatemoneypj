@@ -1,6 +1,5 @@
 import { createContext, useContext, useState, ReactNode } from 'react';
-import { loginRequest, User } from './authService';
-import { Navigate } from 'react-router';
+import { loginRequest, User } from '../api/authService';
 
 interface AuthContextType {
   user: User | null;
