@@ -21,8 +21,8 @@ export default function UserProfiles() {
     hideLoading()
   }, []);
 
-
- if (!profile) ? showLoading() : hideLoading();  
+console.log(profile.username)
+ //if (!profile) ? showLoading() : hideLoading();  
 
   return (
     <>

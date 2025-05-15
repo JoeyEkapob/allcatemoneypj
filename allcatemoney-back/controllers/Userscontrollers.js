@@ -2,7 +2,6 @@ const pool = require('./config/db')
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
-
 module.exports ={ 
     register : async (req,res)=>{
         const { username , password , fullname , phone , email, custom_id} = req.body
@@ -88,7 +87,24 @@ module.exports ={
         }
     },
     getuserprofile: async (req,res) =>{
-        return console.log('test')
+      const userId = req.user.user_id
+   
+        const user = await pool.query(
+                `SELECT * FROM users WHERE id = $1`,[userId]
+            )
+        if(user.rowCount === 0) {
+
+                return res.status(200).json({  success: false, field: 'username', message:'ไม่พบผู้ใช้งาน'})
+            }
+
+
+        const userresult = user.rows[0] 
+
+
+      //  console.log(userresult)
+        return userresult
+   
+        
     }
     
 }
