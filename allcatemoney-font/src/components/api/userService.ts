@@ -1,9 +1,24 @@
-// 📄 src/api/userService.ts
+export interface UserProfile {
+  id: number;
+  username: string;
+  first_name: string;
+  last_name: string;
+  role_name: string;
+  avatar_url?: string;
+  bio?: string;
+  address_line?: string;
+  subdistrict?: string;
+  district?: string;
+  province?: string;
+  postal_code?: string;
+  country?: string;
 
+}
 
-
-export const getUserProfile = async () => {
+export const getUserProfile = async (): Promise<UserProfile> => {
   const token = localStorage.getItem('token');
+
+
   if (!token) throw new Error('Missing token');
 
   const res = await fetch(`http://localhost:5000/user/profile`, {
@@ -13,17 +28,17 @@ export const getUserProfile = async () => {
       'Content-Type': 'application/json',
     },
   });
-    const data = await res.json();
-
-      if(!data.success){
+    const userresult = await res.json();
+      if(!userresult.success){
         throw {
-        field: data.field || 'general',
-        message: data.message || 'เกิดข้อผิดพลาด',
+        field: userresult.field || 'general',
+        message: userresult.message || 'เกิดข้อผิดพลาด',
       };
     
       }else{
-
-        return{ username :data.username as string}
+        //console.log(data)
+      return  userresult.data as UserProfile
+            
       }
 
 

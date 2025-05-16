@@ -3,14 +3,22 @@ import { Modal } from "../ui/modal";
 import Button from "../ui/button/Button";
 import Input from "../form/input/InputField";
 import Label from "../form/Label";
+import { UserProfile } from "../api/userService";
 
-export default function UserMetaCard() {
+type Props = {
+profile: UserProfile;
+};
+
+export default function UserMetaCard({profile}:Props) {
   const { isOpen, openModal, closeModal } = useModal();
   const handleSave = () => {
     // Handle save logic here
     console.log("Saving changes...");
     closeModal();
   };
+   
+
+  
   return (
     <>
       <div className="p-5 border border-gray-200 rounded-2xl dark:border-gray-800 lg:p-6">
@@ -21,15 +29,15 @@ export default function UserMetaCard() {
             </div>
             <div className="order-3 xl:order-2">
               <h4 className="mb-2 text-lg font-semibold text-center text-gray-800 dark:text-white/90 xl:text-left">
-                Musharof Chowdhury
+               {profile?.first_name || 'ไม่พบข้อมูล'} {profile?.last_name || 'ไม่พบข้อมูล'} 
               </h4>
               <div className="flex flex-col items-center gap-1 text-center xl:flex-row xl:gap-3 xl:text-left">
                 <p className="text-sm text-gray-500 dark:text-gray-400">
-                  Team Manager
+                  {profile?.bio || 'ไม่พบข้อมูล' }
                 </p>
                 <div className="hidden h-3.5 w-px bg-gray-300 dark:bg-gray-700 xl:block"></div>
                 <p className="text-sm text-gray-500 dark:text-gray-400">
-                  Arizona, United States
+                  {profile?.district || 'ไม่พบข้อมูล'}, {profile?.country || 'ไม่พบข้อมูล'}
                 </p>
               </div>
             </div>

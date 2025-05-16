@@ -88,21 +88,24 @@ module.exports ={
     },
     getuserprofile: async (req,res) =>{
       const userId = req.user.user_id
-   
+     
         const user = await pool.query(
-                `SELECT * FROM users WHERE id = $1`,[userId]
+                `SELECT a.*,b.*,c.*,p.* FROM users a
+                INNER JOIN user_roles b ON a.id = b.user_id
+                INNER JOIN roles c ON b.role_id = c.id
+                INNER JOIN user_profiles p ON a.id = p.user_id
+                WHERE a.id = $1`,[userId]
             )
+          
         if(user.rowCount === 0) {
-
-                return res.status(200).json({  success: false, field: 'username', message:'ไม่พบผู้ใช้งาน'})
-            }
-
-
+        
+            return res.status(200).json({  success: false, field: 'username', message:'ไม่พบผู้ใช้งาน'})
+        
+        }
         const userresult = user.rows[0] 
+      //console.log(userresult)
+       return res.status(200).json({ success: true, data: userresult });
 
-
-      //  console.log(userresult)
-        return userresult
    
         
     }
