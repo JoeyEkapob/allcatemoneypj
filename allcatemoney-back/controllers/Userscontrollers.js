@@ -90,7 +90,10 @@ module.exports ={
       const userId = req.user.user_id
      
         const user = await pool.query(
-                `SELECT a.*,b.*,c.*,p.* FROM users a
+                `SELECT a.id,a.username,p.first_name,p.last_name,a.email ,p.avatar_url , p.bio , c.role_name
+                , p.address_line , p.subdistrict , p.district,p.province,p.postal_code,p.country,p.phone_number
+                ,a.custom_id , p.facebook_address , p.line_address , p.github_address
+                FROM users a
                 INNER JOIN user_roles b ON a.id = b.user_id
                 INNER JOIN roles c ON b.role_id = c.id
                 INNER JOIN user_profiles p ON a.id = p.user_id

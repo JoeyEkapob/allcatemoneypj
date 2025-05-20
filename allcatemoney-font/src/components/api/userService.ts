@@ -1,22 +1,27 @@
 export interface UserProfile {
-  id: number;
-  username: string;
-  first_name: string;
-  last_name: string;
-  role_name: string;
-  avatar_url?: string;
-  bio?: string;
-  address_line?: string;
-  subdistrict?: string;
-  district?: string;
-  province?: string;
-  postal_code?: string;
-  country?: string;
-
+  id: string,
+  username: string,
+  first_name: string,
+  last_name: string,
+  email: string,
+  phone_number: string,
+  avatar_url: string,
+  bio: string,
+  role_name: string,
+  address_line: string,
+  subdistrict: string,
+  district: string,
+  province: string,
+  postal_code: string,
+  country: string,
+  custom_id:string,
+  facebook_address:string,
+  line_address:string,
+  github_address:string
 }
 
-export const getUserProfile = async (): Promise<UserProfile> => {
-  const token = localStorage.getItem('token');
+
+export const getUserProfile = async (token:string): Promise<UserProfile> => {
 
 
   if (!token) throw new Error('Missing token');

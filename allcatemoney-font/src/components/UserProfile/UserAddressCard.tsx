@@ -5,7 +5,12 @@ import Input from "../form/input/InputField";
 import Label from "../form/Label";
 import { UserProfile } from "../api/userService";
 
-export default function UserAddressCard({profile}:UserProfile) {
+type Props = {
+profile: UserProfile | null;
+};
+
+
+export default function UserAddressCard({profile}:Props) {
   const { isOpen, openModal, closeModal } = useModal();
   const handleSave = () => {
     // Handle save logic here
@@ -24,7 +29,7 @@ export default function UserAddressCard({profile}:UserProfile) {
             <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-7 2xl:gap-x-32">
               <div>
                 <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
-                  Country
+                  ประเทศ
                 </p>
                 <p className="text-sm font-medium text-gray-800 dark:text-white/90">
                   {profile?.country}
@@ -33,19 +38,19 @@ export default function UserAddressCard({profile}:UserProfile) {
 
               <div>
                 <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
-                  City/State
+                  ที่อยู่
                 </p>
                 <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                  {profile?.address_line} {profile?.subdistrict} {profile?.district}
+                  {profile?.address_line || 'ไม่พบข้อมูล' } {profile?.subdistrict || 'ไม่พบข้อมูล' } {profile?.district || 'ไม่พบข้อมูล'}
                 </p>
               </div>
 
               <div>
                 <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
-                  Postal Code
+                  รหัสไปรษณีย์
                 </p>
                 <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                  {profile?.postal_code}
+                  {profile?.postal_code || 'ไม่พบข้อมูล'}
                 </p>
               </div>
 
@@ -54,7 +59,7 @@ export default function UserAddressCard({profile}:UserProfile) {
                   TAX ID
                 </p>
                 <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                  AS4568384
+                  {profile?.custom_id}
                 </p>
               </div>
             </div>

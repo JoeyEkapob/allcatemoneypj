@@ -16,7 +16,7 @@ export const loginRequest = async (username:string ,password:string)=>{
       if(!data.success){
         throw {
         field: data.field || 'general',
-        message: data.message || 'เกิดข้อผิดพลาด',
+        message: data.message || 'เกิดข้อผิดพลาด'
       };
     
       }else{

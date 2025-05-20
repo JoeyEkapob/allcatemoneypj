@@ -6,7 +6,7 @@ import Label from "../form/Label";
 import { UserProfile } from "../api/userService";
 
 type Props = {
-profile: UserProfile;
+profile: UserProfile | null;
 };
 
 export default function UserMetaCard({profile}:Props) {
@@ -43,7 +43,7 @@ export default function UserMetaCard({profile}:Props) {
             </div>
             <div className="flex items-center order-2 gap-2 grow xl:order-3 xl:justify-end">
               <a
-                href="https://www.facebook.com/PimjoHQ"
+                href={profile?.facebook_address}
                 target="_blank"
                 rel="noopener"
                 className="flex h-11 w-11 items-center justify-center gap-2 rounded-full border border-gray-300 bg-white text-sm font-medium text-gray-700 shadow-theme-xs hover:bg-gray-50 hover:text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03] dark:hover:text-gray-200"
@@ -64,48 +64,45 @@ export default function UserMetaCard({profile}:Props) {
               </a>
 
               <a
-                href="https://x.com/PimjoHQ"
+                href={profile?.line_address}
+                target="_blank"
+                rel="noopener"
+                className="flex h-11 w-11 items-center justify-center gap-2 rounded-full border border-gray-300 bg-white text-sm font-medium text-gray-700 shadow-theme-xs hover:bg-gray-50 hover:text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03] dark:hover:text-gray-200"
+              >
+                
+                <svg
+                  className="fill-current"
+                  width="25"
+                  height="25"
+                  viewBox="0 -2 15 20"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                   <path d="M8 0c4.411 0 8 2.912 8 6.492 0 1.433-.555 2.723-1.715 3.994-1.678 1.932-5.431 4.285-6.285 4.645-.83.35-.734-.197-.696-.413l.003-.018.114-.685c.027-.204.055-.521-.026-.723-.09-.223-.444-.339-.704-.395C2.846 12.39 0 9.701 0 6.492 0 2.912 3.59 0 8 0M5.022 7.686H3.497V4.918a.156.156 0 0 0-.155-.156H2.78a.156.156 0 0 0-.156.156v3.486c0 .041.017.08.044.107v.001l.002.002.002.002a.15.15 0 0 0 .108.043h2.242c.086 0 .155-.07.155-.156v-.56a.156.156 0 0 0-.155-.157m.791-2.924a.156.156 0 0 0-.156.156v3.486c0 .086.07.155.156.155h.562c.086 0 .155-.07.155-.155V4.918a.156.156 0 0 0-.155-.156zm3.863 0a.156.156 0 0 0-.156.156v2.07L7.923 4.832l-.013-.015v-.001l-.01-.01-.003-.003-.011-.009h-.001L7.88 4.79l-.003-.002-.005-.003-.008-.005h-.002l-.003-.002-.01-.004-.004-.002-.01-.003h-.002l-.003-.001-.009-.002h-.006l-.003-.001h-.004l-.002-.001h-.574a.156.156 0 0 0-.156.155v3.486c0 .086.07.155.156.155h.56c.087 0 .157-.07.157-.155v-2.07l1.6 2.16a.2.2 0 0 0 .039.038l.001.001.01.006.004.002.008.004.007.003.005.002.01.003h.003a.2.2 0 0 0 .04.006h.56c.087 0 .157-.07.157-.155V4.918a.156.156 0 0 0-.156-.156zm3.815.717v-.56a.156.156 0 0 0-.155-.157h-2.242a.16.16 0 0 0-.108.044h-.001l-.001.002-.002.003a.16.16 0 0 0-.044.107v3.486c0 .041.017.08.044.107l.002.003.002.002a.16.16 0 0 0 .108.043h2.242c.086 0 .155-.07.155-.156v-.56a.156.156 0 0 0-.155-.157H11.81v-.589h1.525c.086 0 .155-.07.155-.156v-.56a.156.156 0 0 0-.155-.157H11.81v-.589h1.525c.086 0 .155-.07.155-.156Z"/>
+
+                </svg>
+              </a>
+
+              <a
+                href={profile?.github_address}
                 target="_blank"
                 rel="noopener"
                 className="flex h-11 w-11 items-center justify-center gap-2 rounded-full border border-gray-300 bg-white text-sm font-medium text-gray-700 shadow-theme-xs hover:bg-gray-50 hover:text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03] dark:hover:text-gray-200"
               >
                 <svg
                   className="fill-current"
-                  width="20"
-                  height="20"
-                  viewBox="0 0 20 20"
+                  width="25"
+                  height="25"
+                  viewBox="0 -1 15 20"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
                 >
-                  <path
-                    d="M15.1708 1.875H17.9274L11.9049 8.75833L18.9899 18.125H13.4424L9.09742 12.4442L4.12578 18.125H1.36745L7.80912 10.7625L1.01245 1.875H6.70078L10.6283 7.0675L15.1708 1.875ZM14.2033 16.475H15.7308L5.87078 3.43833H4.23162L14.2033 16.475Z"
-                    fill=""
-                  />
+                    <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8"/>
+
                 </svg>
               </a>
 
-              <a
-                href="https://www.linkedin.com/company/pimjo"
-                target="_blank"
-                rel="noopener"
-                className="flex h-11 w-11 items-center justify-center gap-2 rounded-full border border-gray-300 bg-white text-sm font-medium text-gray-700 shadow-theme-xs hover:bg-gray-50 hover:text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03] dark:hover:text-gray-200"
-              >
-                <svg
-                  className="fill-current"
-                  width="20"
-                  height="20"
-                  viewBox="0 0 20 20"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M5.78381 4.16645C5.78351 4.84504 5.37181 5.45569 4.74286 5.71045C4.11391 5.96521 3.39331 5.81321 2.92083 5.32613C2.44836 4.83904 2.31837 4.11413 2.59216 3.49323C2.86596 2.87233 3.48886 2.47942 4.16715 2.49978C5.06804 2.52682 5.78422 3.26515 5.78381 4.16645ZM5.83381 7.06645H2.50048V17.4998H5.83381V7.06645ZM11.1005 7.06645H7.78381V17.4998H11.0672V12.0248C11.0672 8.97475 15.0422 8.69142 15.0422 12.0248V17.4998H18.3338V10.8914C18.3338 5.74978 12.4505 5.94145 11.0672 8.46642L11.1005 7.06645Z"
-                    fill=""
-                  />
-                </svg>
-              </a>
-
-              <a
+              {/* <a
                 href="https://instagram.com/PimjoHQ"
                 target="_blank"
                 rel="noopener"
@@ -124,12 +121,12 @@ export default function UserMetaCard({profile}:Props) {
                     fill=""
                   />
                 </svg>
-              </a>
+              </a> */}
             </div>
           </div>
           <button
             onClick={openModal}
-            className="flex w-full items-center justify-center gap-2 rounded-full border border-gray-300 bg-white px-4 py-3 text-sm font-medium text-gray-700 shadow-theme-xs hover:bg-gray-50 hover:text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03] dark:hover:text-gray-200 lg:inline-flex lg:w-auto"
+            className="flex w-full whitespace-nowrap items-center justify-center gap-2  rounded-full border border-gray-300 bg-white p-4 py-3 text-sm font-medium text-gray-700 shadow-theme-xs hover:bg-gray-50 hover:text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03] dark:hover:text-gray-200 lg:inline-flex lg:w-auto"
           >
             <svg
               className="fill-current"
@@ -146,7 +143,7 @@ export default function UserMetaCard({profile}:Props) {
                 fill=""
               />
             </svg>
-            Edit
+            เเก้ไข 
           </button>
         </div>
       </div>
@@ -154,17 +151,17 @@ export default function UserMetaCard({profile}:Props) {
         <div className="no-scrollbar relative w-full max-w-[700px] overflow-y-auto rounded-3xl bg-white p-4 dark:bg-gray-900 lg:p-11">
           <div className="px-2 pr-14">
             <h4 className="mb-2 text-2xl font-semibold text-gray-800 dark:text-white/90">
-              Edit Personal Information
+              แก้ไขข้อมูลส่วนตัว
             </h4>
             <p className="mb-6 text-sm text-gray-500 dark:text-gray-400 lg:mb-7">
-              Update your details to keep your profile up-to-date.
+              อัปเดตรายละเอียดของคุณเพื่อให้โปรไฟล์ของคุณเป็นปัจจุบัน
             </p>
           </div>
           <form className="flex flex-col">
             <div className="custom-scrollbar h-[450px] overflow-y-auto px-2 pb-3">
               <div>
                 <h5 className="mb-5 text-lg font-medium text-gray-800 dark:text-white/90 lg:mb-6">
-                  Social Links
+                  ลิงค์โซเชียล
                 </h5>
 
                 <div className="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-2">
@@ -172,68 +169,68 @@ export default function UserMetaCard({profile}:Props) {
                     <Label>Facebook</Label>
                     <Input
                       type="text"
-                      value="https://www.facebook.com/PimjoHQ"
+                      value={profile?.facebook_address}
                     />
                   </div>
 
                   <div>
-                    <Label>X.com</Label>
-                    <Input type="text" value="https://x.com/PimjoHQ" />
+                    <Label>Line</Label>
+                    <Input type="text" value={profile?.line_address} />
                   </div>
 
                   <div>
-                    <Label>Linkedin</Label>
+                    <Label>Github</Label>
                     <Input
                       type="text"
-                      value="https://www.linkedin.com/company/pimjo"
+                      value={profile?.github_address}
                     />
                   </div>
 
-                  <div>
+                 {/*  <div>
                     <Label>Instagram</Label>
                     <Input type="text" value="https://instagram.com/PimjoHQ" />
-                  </div>
+                  </div> */}
                 </div>
               </div>
               <div className="mt-7">
                 <h5 className="mb-5 text-lg font-medium text-gray-800 dark:text-white/90 lg:mb-6">
-                  Personal Information
+                  ข้อมูลส่วนตัว
                 </h5>
 
                 <div className="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-2">
                   <div className="col-span-2 lg:col-span-1">
-                    <Label>First Name</Label>
-                    <Input type="text" value="Musharof" />
+                    <Label>ชื่อ</Label>
+                    <Input type="text" value={profile?.first_name}/>
                   </div>
 
                   <div className="col-span-2 lg:col-span-1">
-                    <Label>Last Name</Label>
-                    <Input type="text" value="Chowdhury" />
+                    <Label>นามสกุล</Label>
+                    <Input type="text" value={profile?.last_name}/>
                   </div>
 
                   <div className="col-span-2 lg:col-span-1">
-                    <Label>Email Address</Label>
-                    <Input type="text" value="randomuser@pimjo.com" />
+                    <Label>อีเมลล์</Label>
+                    <Input type="text" value={profile?.email}/>
                   </div>
 
                   <div className="col-span-2 lg:col-span-1">
-                    <Label>Phone</Label>
-                    <Input type="text" value="+09 363 398 46" />
+                    <Label>โทรศัพท์</Label>
+                    <Input type="text" value={profile?.phone_number} />
                   </div>
 
                   <div className="col-span-2">
-                    <Label>Bio</Label>
-                    <Input type="text" value="Team Manager" />
+                    <Label>ชีวประวัติ</Label>
+                    <Input type="text" value={profile?.bio} />
                   </div>
                 </div>
               </div>
             </div>
             <div className="flex items-center gap-3 px-2 mt-6 lg:justify-end">
               <Button size="sm" variant="outline" onClick={closeModal}>
-                Close
+                ปิด
               </Button>
               <Button size="sm" onClick={handleSave}>
-                Save Changes
+                บันทึก
               </Button>
             </div>
           </form>

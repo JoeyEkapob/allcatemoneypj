@@ -11,7 +11,7 @@ import { useAuth } from "../components/auth/AuthContext";
 
 export default function UserProfiles() {
   const { token } = useAuth();
-  const [profile, setProfile] = useState<any | null>(null);
+  const [profile, setProfile] = useState<UserProfile | null>(null);
   const {showLoading, hideLoading } = useLoading();
   
   useEffect(()=>{
