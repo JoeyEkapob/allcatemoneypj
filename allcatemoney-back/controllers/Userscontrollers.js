@@ -88,8 +88,8 @@ module.exports ={
     },
     getuserprofile: async (req,res) =>{
       const userId = req.user.user_id
-     
-        const user = await pool.query(
+        try{
+                const user = await pool.query(
                 `SELECT a.id,a.username,p.first_name,p.last_name,a.email ,p.avatar_url , p.bio , c.role_name
                 , p.address_line , p.subdistrict , p.district,p.province,p.postal_code,p.country,p.phone_number
                 ,a.custom_id , p.facebook_address , p.line_address , p.github_address
@@ -99,18 +99,70 @@ module.exports ={
                 INNER JOIN user_profiles p ON a.id = p.user_id
                 WHERE a.id = $1`,[userId]
             )
-          
-        if(user.rowCount === 0) {
+
+            if(user.rowCount === 0) {
         
             return res.status(200).json({  success: false, field: 'username', message:'ไม่พบผู้ใช้งาน'})
         
         }
-        const userresult = user.rows[0] 
-      //console.log(userresult)
-       return res.status(200).json({ success: true, data: userresult });
+            const userresult = user.rows[0] 
+            //console.log(userresult)
+            return res.status(200).json({ success: true, data: userresult });
+        }catch(e){
+            console.error(e);
+            res.status(500).json({ error: 'Internal server error' });
+        }
+       
+          
+        
 
    
         
+    },
+    editprofile:async (req,res) =>{
+
+        const userId = req.params.id;
+        const { first_name,last_name,email,phone_number,bio,facebook_address,line_address,github_address} = req.body;
+       const client = await pool.connect();
+
+        try{
+            await client.query('BEGIN')
+
+            const userupdate = await client.query(`UPDATE users SET 
+            full_name = $1 , email = $2 WHERE id = $3 RETURNING *`,
+                [`${first_name} ${last_name}`, email , userId ]
+            )
+
+            const profileupdate = await client.query(`UPDATE user_profiles SET 
+                first_name = $1,
+                last_name = $2,
+                phone_number = $3,
+                bio = $4,
+                facebook_address = $5,
+                line_address = $6,
+                github_address = $7,
+                updated_at = NOW()
+                WHERE user_id = $8
+                RETURNING *`,
+            [first_name,last_name, phone_number, bio, facebook_address, line_address,github_address, userId ])
+
+       
+            if (userupdate.rowCount === 0 || profileupdate.rowCount === 0) {
+              return   res.status(200).json({ success: false, message: 'ไม่พบผู้ใช้งาน' });
+            }
+
+            
+            await client.query('COMMIT');
+
+           return  res.status(200).json({   success: true, user: userupdate.rows[0],profile: profileupdate.rows[0],});
+
+            
+        }catch(e){
+            await client.query('ROLLBACK');
+            console.error(e);
+            return res.status(500).json({ success: false, message: 'เกิดข้อผิดพลาดระหว่างอัปเดตข้อมูล' });
+        }finally {
+            client.release();
+        }
     }
-    
 }

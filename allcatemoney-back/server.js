@@ -27,6 +27,6 @@ app.get('/api', (req, res) => {
 app.post('/register',(req,res)=>Userscontrollers.register(req,res))
 app.post('/login',(req,res)=>Userscontrollers.login(req,res))
 app.get('/user/profile',authMiddleware,Userscontrollers.getuserprofile)
-
+app.patch('/user/editprofile/:id', authMiddleware, Userscontrollers.editprofile)
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

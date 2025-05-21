@@ -50,23 +50,37 @@ export const getUserProfile = async (token:string): Promise<UserProfile> => {
  
 };
 
-export const updateUserProfile = async (profileData: any) => {
-  const token = localStorage.getItem('token');
+type ProfileUpdatePayload = {
+  first_name: string;
+  last_name: string;
+  email: string;
+  phone_number : string,
+  bio : string,
+  facebook_address: string,
+  line_address : string,
+  github_address : string,
+  
+};
+
+
+export const updateUserProfile = async (profileData:ProfileUpdatePayload,id:string,token:string) => {
+  //const token = localStorage.getItem('token');
   if (!token) throw new Error('Missing token');
 
-  const res = await fetch(`${API_BASE}/user-profile`, {
-    method: 'PUT',
+  const res = await fetch(`http://localhost:5000/user/editprofile/${id}`, {
+    method: 'PATCH',
     headers: {
       'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify(profileData),
   });
+  const datareturn = await res.json();
 
-  if (!res.ok) {
+  if (!datareturn.success) {
     const error = await res.json();
     throw new Error(error.message || 'Failed to update profile');
   }
 
-  return await res.json();
+  return datareturn
 };

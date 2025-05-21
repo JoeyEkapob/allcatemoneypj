@@ -3,27 +3,56 @@ import { Modal } from "../ui/modal";
 import Button from "../ui/button/Button";
 import Input from "../form/input/InputField";
 import Label from "../form/Label";
-import { UserProfile } from "../api/userService";
+import { updateUserProfile, UserProfile } from "../api/userService";
 import { useLoading } from "../../context/LoadingContext";
+import { useEffect, useState } from "react";
+import { useAuth } from "../auth/AuthContext";
 
 type Props = {
 profile: UserProfile | null;
+
 };
 
 export default function UserInfoCard({ profile }: Props) {
+  const { token ,user }  = useAuth();
   const { isOpen, openModal, closeModal } = useModal();
   const {showLoading , hideLoading} = useLoading()
+  const [form,setForm] = useState({
+    first_name: profile?.first_name || '',
+    last_name: profile?.last_name || '',
+    email:profile?.email || '',
+    phone_number : profile?.phone_number || '',
+    bio : profile?.bio || '',
+    facebook_address: profile?.facebook_address || '',
+    line_address : profile?.line_address || '',
+    github_address : profile?.github_address || '',
+
+  })
+
+useEffect(() => {
+  if(profile){
+    setForm({
+    first_name: profile?.first_name || '',
+    last_name: profile?.last_name || '',
+    email:profile?.email || '',
+    phone_number : profile?.phone_number || '',
+    bio : profile?.bio || '',
+    facebook_address: profile?.facebook_address || '',
+    line_address : profile?.line_address || '',
+    github_address : profile?.github_address || '',
+    })
+  }
+},[profile])
+
   const handleSave =  async () => {
-    // Handle save logic here
+ 
+    if (!profile?.id) return
+    if(!token) return;
     showLoading()
     try{
-      /* const res = await fetch(`http://localhost:5000/user/profileedit/${userId}`),{
-        method:'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body:JSON.stringify({full_name:name})
-      } */
+     const result =  await updateUserProfile(form , profile?.id ,token)
+      setForm(result.profile)
+      closeModal();
     }catch(err){
       console.error(err)
     }finally{
@@ -45,7 +74,7 @@ export default function UserInfoCard({ profile }: Props) {
                 ชื่อ
               </p>
               <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                 {profile?.first_name || 'ไม่พบข้อมูล'}
+                 {form?.first_name || 'ไม่พบข้อมูล'}
               </p>
             </div>
 
@@ -54,7 +83,7 @@ export default function UserInfoCard({ profile }: Props) {
                 นามสกุล
               </p>
               <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                  {profile?.last_name || 'ไม่พบข้อมูล'}
+                  {form?.last_name || 'ไม่พบข้อมูล'}
               </p>
             </div>
 
@@ -63,7 +92,7 @@ export default function UserInfoCard({ profile }: Props) {
                 อีเมลล์
               </p>
               <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                {profile?.email || 'ไม่พบข้อมูล'}
+                {form?.email || 'ไม่พบข้อมูล'}
               </p>
             </div>
 
@@ -72,7 +101,7 @@ export default function UserInfoCard({ profile }: Props) {
                 โทรศัพท์
               </p>
               <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                {profile?.phone_number || 'ไม่พบข้อมูล'}
+                {form?.phone_number || 'ไม่พบข้อมูล'}
               </p>
             </div>
 
@@ -81,7 +110,7 @@ export default function UserInfoCard({ profile }: Props) {
                 ชีวประวัติ
               </p>
               <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                {profile?.bio || 'ไม่พบข้อมูล'}
+                {form?.bio || 'ไม่พบข้อมูล'}
               </p>
             </div>
           </div>
@@ -127,25 +156,31 @@ export default function UserInfoCard({ profile }: Props) {
                   ลิงค์โซเชียล
                 </h5>
 
-                <div className="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-2">
+                <div className="grid grid-cols-1 gap-x-6 gap-y-5 ">
                   <div>
                     <Label>Facebook</Label>
                     <Input
                       type="text"
-                      value={profile?.facebook_address}
+                      value={form.facebook_address}
+                      onChange={(e)=> setForm({...form,facebook_address:e.target.value})}
                     />
                   </div>
 
                   <div>
                     <Label>Line</Label>
-                    <Input type="text" value={profile?.line_address} />
+                    <Input type="text" value={form.line_address} 
+                    onChange={(e)=>setForm({...form,line_address:e.target.value})
+
+                    }
+                    />
                   </div>
 
                   <div>
                     <Label>Github</Label>
                     <Input
                       type="text"
-                      value={profile?.github_address}
+                      value={form.github_address}
+                      onChange={(e)=>setForm({...form,github_address:e.target.value})}
                     />
                   </div>
 
@@ -163,27 +198,35 @@ export default function UserInfoCard({ profile }: Props) {
                 <div className="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-2">
                   <div className="col-span-2 lg:col-span-1">
                     <Label>ชื่อ</Label>
-                    <Input type="text" value={profile?.first_name} />
+                    <Input type="text" value={form.first_name} 
+                    onChange={(e)=>setForm({...form,first_name:e.target.value})}
+                    />
                   </div>
 
                   <div className="col-span-2 lg:col-span-1">
                     <Label>นามสกุล</Label>
-                    <Input type="text" value={profile?.last_name} />
+                    <Input type="text" value={form.last_name} 
+                    onChange={(e)=>setForm({...form,last_name:e.target.value})}/>
                   </div>
 
                   <div className="col-span-2 lg:col-span-1">
                     <Label>อีเมลล์</Label>
-                    <Input type="text" value={profile?.email} />
+                    <Input type="text" value={form.email} 
+                    onChange={(e)=>setForm({...form,email:e.target.value})}
+                    />
                   </div>
 
                   <div className="col-span-2 lg:col-span-1">
                     <Label>โทรศัพท์</Label>
-                    <Input type="text" value={profile?.phone_number} />
+                    <Input type="text" value={form.phone_number} 
+                    onChange={(e)=>setForm({...form,phone_number:e.target.value})}/>
                   </div>
 
                   <div className="col-span-2">
                     <Label>ชีวประวัติ</Label>
-                    <Input type="text" value={profile?.bio} />
+                    <Input type="text" value={form.bio} 
+                    onChange={(e)=>setForm({...form,bio:e.target.value})}
+                    />
                   </div>
                 </div>
               </div>
