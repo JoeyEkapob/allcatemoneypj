@@ -7,14 +7,15 @@ import { updateUserProfile, UserProfile } from "../api/userService";
 import { useLoading } from "../../context/LoadingContext";
 import { useEffect, useState } from "react";
 import { useAuth } from "../auth/AuthContext";
+import { User } from "../api/authService";
 
 type Props = {
 profile: UserProfile | null;
-
+user: User | null;
 };
 
 export default function UserInfoCard({ profile }: Props) {
-  const { token ,user }  = useAuth();
+  const { token ,setUser }  = useAuth();
   const { isOpen, openModal, closeModal } = useModal();
   const {showLoading , hideLoading} = useLoading()
   const [form,setForm] = useState({
@@ -44,21 +45,23 @@ useEffect(() => {
   }
 },[profile])
 
-  const handleSave =  async () => {
- 
+  const handleSave =  async (e:React.FormEvent) => {
+   e.preventDefault()
     if (!profile?.id) return
-    if(!token) return;
+    if (!token) return;
     showLoading()
     try{
      const result =  await updateUserProfile(form , profile?.id ,token)
-      setForm(result.profile)
-      closeModal();
+    setUser(result.user)
+    //setForm(result.profile)
+   
+    closeModal();
     }catch(err){
       console.error(err)
     }finally{
       hideLoading()
     }
-    closeModal();
+   
   };
   return (
     <div className="p-5 border border-gray-200 rounded-2xl dark:border-gray-800 lg:p-6">

@@ -1,3 +1,5 @@
+import { User } from "./authService";
+
 export interface UserProfile {
   id: string,
   username: string,
@@ -82,5 +84,9 @@ export const updateUserProfile = async (profileData:ProfileUpdatePayload,id:stri
     throw new Error(error.message || 'Failed to update profile');
   }
 
-  return datareturn
+  return {
+              user: datareturn.user as User,
+              profile: datareturn.profile as ProfileUpdatePayload
+            };
+    
 };

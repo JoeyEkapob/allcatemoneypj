@@ -129,7 +129,7 @@ module.exports ={
             await client.query('BEGIN')
 
             const userupdate = await client.query(`UPDATE users SET 
-            full_name = $1 , email = $2 WHERE id = $3 RETURNING *`,
+            full_name = $1 , email = $2 WHERE id = $3 RETURNING id ,email, full_name ,username`,
                 [`${first_name} ${last_name}`, email , userId ]
             )
 
@@ -146,7 +146,7 @@ module.exports ={
                 RETURNING *`,
             [first_name,last_name, phone_number, bio, facebook_address, line_address,github_address, userId ])
 
-       
+                
             if (userupdate.rowCount === 0 || profileupdate.rowCount === 0) {
               return   res.status(200).json({ success: false, message: 'ไม่พบผู้ใช้งาน' });
             }

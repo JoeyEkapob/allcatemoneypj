@@ -6,15 +6,15 @@ interface AuthContextType {
   token: string | null;
   login: (email: string, password: string) => Promise<void>;
   logout: () => void;
-  setUser: (user: UserProfile) => void;
+  setUser: (user: User) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<User | null>(() => {
+   const [user, setUser] = useState<User | null>(() => {
     const u = localStorage.getItem('user');
-    return u ? JSON.parse(u) : null;
+    return u ? (JSON.parse(u) as User | null) : null;
   });
 
   const [token, setToken] = useState<string | null>(() => {
@@ -27,7 +27,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setUser(user);
       setToken(token);
       localStorage.setItem('user', JSON.stringify(user));
-      localStorage.setItem('token', token);
+      localStorage.setItem('token', token); 
     }catch(err: any){
       throw {
         field: err.field || 'general',
@@ -44,9 +44,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     //localStorage.clear(); // หรือเฉพาะ token/user
   };
+  const setUserAndSync = (updatedUser:User) => {
+
+  setUser(updatedUser);
+  localStorage.setItem('user', JSON.stringify(updatedUser)); // ✅ sync localStorage
+};
 
   return (
-    <AuthContext.Provider value={{ user, token, login, logout }}>
+    <AuthContext.Provider value={{ user, token, login, logout ,  setUser:setUserAndSync }}>
       {children}
     </AuthContext.Provider>
   );
