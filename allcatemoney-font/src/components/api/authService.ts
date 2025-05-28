@@ -6,16 +6,23 @@ export interface User {
 }
 
 export const loginRequest = async (username:string ,password:string)=>{
-
-    const response = await fetch('http://localhost:5000/login', {
+   try{
+      const response = await fetch('http://localhost:5000/login', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password })
+        credentials: 'include', // ✅ สำคัญ
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username, password }),
       });
+
+   
+
       const data = await response.json();
-    
+   
       if(!data.success){
-        throw {
+
+        return {
         field: data.field || 'general',
         message: data.message || 'เกิดข้อผิดพลาด'
       };
@@ -24,10 +31,13 @@ export const loginRequest = async (username:string ,password:string)=>{
 
         return {
             user: data.user as User,
-            token: data.token as string
           };
       }
       //const data = await response.json();
+   } catch (err) {
+  console.error('Login error:', err); // ดู error message ตรงนี้
+}
+    
      
     };
 

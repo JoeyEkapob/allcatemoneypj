@@ -32,8 +32,9 @@ module.exports ={
         }
     },
     login: async (req,res)=>{
+     
         const { username, password } = req.body;
-       // console.log(username,password)
+     
         try{
             const userresult = await pool.query(
                 `SELECT * FROM users WHERE username = $1`,[username]
@@ -58,7 +59,14 @@ module.exports ={
                 process.env.JWT_SECRET,{expiresIn:process.env.JWT_EXPIRES_IN}
             )
 
-            /* return console.log(req.headers['user-agent'] || 'unknown') */
+            res.cookie('token',token,{
+                httpOnly:true,
+                secure:false,
+                sameSite:'Lax',
+                maxAge:86400000,
+            })
+
+            // return console.log(req.headers['user-agent'] || 'unknown') 
 
             await pool.query(
                 `INSERT INTO user_sessions (user_id,session_token,ip_address,user_agent,expires_at,created_at)
@@ -73,7 +81,6 @@ module.exports ={
             return  res.json({
                 success:true,
                 message:'Login successfull',
-                token,
                 user:{
                     id:user.id,
                     username:user.username,
@@ -81,6 +88,8 @@ module.exports ={
                     email:user.email,
                 }
             }) 
+
+
         }catch(e){
             console.error(e);
             res.status(500).json({ error: 'Internal server error' });
@@ -88,6 +97,8 @@ module.exports ={
     },
     getuserprofile: async (req,res) =>{
       const userId = req.user.user_id
+  /*     console.log(userId) 
+      return */
         try{
                 const user = await pool.query(
                 `SELECT a.id,a.username,p.first_name,p.last_name,a.email ,p.avatar_url , p.bio , c.role_name
@@ -122,8 +133,10 @@ module.exports ={
     editprofile:async (req,res) =>{
 
         const userId = req.params.id;
+        
         const { first_name,last_name,email,phone_number,bio,facebook_address,line_address,github_address} = req.body;
-       const client = await pool.connect();
+        
+        const client = await pool.connect();
 
         try{
             await client.query('BEGIN')
@@ -164,5 +177,15 @@ module.exports ={
         }finally {
             client.release();
         }
+    },
+    logout : async (req,res)=>{
+
+    res.clearCookie('token', {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'Lax',
+    });
+
+    return res.status(200).json({ message: 'ออกจากระบบเรียบร้อยแล้ว' });
     }
 }

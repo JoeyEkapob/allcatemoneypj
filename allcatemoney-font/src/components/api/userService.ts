@@ -23,21 +23,22 @@ export interface UserProfile {
 }
 
 
-export const getUserProfile = async (token:string): Promise<UserProfile> => {
-
-
-  if (!token) throw new Error('Missing token');
+export const getUserProfile = async () => {
 
   const res = await fetch(`http://localhost:5000/user/profile`, {
     method: 'GET',
+    credentials: 'include',
     headers: {
-      'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json',
     },
   });
+
+
     const userresult = await res.json();
-      if(!userresult.success){
-        throw {
+    console.log(userresult.success)
+  
+      /* if(!userresult.success){
+        return {
         field: userresult.field || 'general',
         message: userresult.message || 'เกิดข้อผิดพลาด',
       };
@@ -47,7 +48,7 @@ export const getUserProfile = async (token:string): Promise<UserProfile> => {
       return  userresult.data as UserProfile
             
       }
-
+ */
 
  
 };

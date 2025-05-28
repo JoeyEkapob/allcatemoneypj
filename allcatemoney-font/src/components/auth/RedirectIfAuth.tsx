@@ -1,5 +1,6 @@
 import { jwtDecode } from "jwt-decode";
 import { Navigate,Outlet, replace } from "react-router";
+import Cookies from 'js-cookie';
 
 interface MytokenPayload{
     exp:number
@@ -7,8 +8,8 @@ interface MytokenPayload{
 
 const RedirectIfAuth: React.FC = () => {
     
-    const token = localStorage.getItem('token')
-   // console.log(token)
+   console.log('token from cookie:', Cookies.get('token'));
+   const token = Cookies.get('token')
 
     if(token){
         try{

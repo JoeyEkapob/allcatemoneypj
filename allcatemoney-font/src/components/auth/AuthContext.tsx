@@ -1,5 +1,7 @@
-import { createContext, useContext, useState, ReactNode } from 'react';
+import { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 import { loginRequest, User } from '../api/authService';
+import { getUserProfile } from '../api/userService';
+
 
 interface AuthContextType {
   user: User | null;
@@ -12,23 +14,30 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-   const [user, setUser] = useState<User | null>(() => {
-    const u = localStorage.getItem('user');
-    return u ? (JSON.parse(u) as User | null) : null;
-  });
+   const [user, setUser] = useState<User | null>(null)
 
-  const [token, setToken] = useState<string | null>(() => {
-    return localStorage.getItem('token');
-  });
+  useEffect(()=>{
+    const loaduser = async () => {
+      try{
+        const res = await getUserProfile();
+        setUser(res)
+      }catch{
+        setUser(null)
+      }
+    }
+    loaduser();
+  },[])
 
   const login = async (username: string, password: string) => {
     try{
-      const { user, token } = await loginRequest(username, password);
-      setUser(user);
-      setToken(token);
-      localStorage.setItem('user', JSON.stringify(user));
-      localStorage.setItem('token', token); 
-    }catch(err: any){
+      await loginRequest(username, password);
+      const res = await getUserProfile();
+       console.log(res)
+        return
+      setUser(res)
+      
+
+    }catch(err:any){
       throw {
         field: err.field || 'general',
         message: err.message || 'เข้าสู่ระบบไม่สำเร็จ',
@@ -36,22 +45,27 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const logout = () => {
-    setUser(null);
-    setToken(null);
-    localStorage.removeItem('user'); 
-    localStorage.removeItem('token'); 
+  const logout = async () => {
+  try {
+      await fetch('http://localhost:5000/logout', {
+        method: 'POST',
+        credentials: 'include',
+      });
+    /* setUser(null);
+    navigate('/login'); */
+    } catch (err) {
+      console.error('Logout failed', err);
+    }
+   
 
-    //localStorage.clear(); // หรือเฉพาะ token/user
   };
   const setUserAndSync = (updatedUser:User) => {
-
   setUser(updatedUser);
   localStorage.setItem('user', JSON.stringify(updatedUser)); // ✅ sync localStorage
 };
 
   return (
-    <AuthContext.Provider value={{ user, token, login, logout ,  setUser:setUserAndSync }}>
+    <AuthContext.Provider value={{ user, login, logout ,  setUser:setUserAndSync }}>
       {children}
     </AuthContext.Provider>
   );

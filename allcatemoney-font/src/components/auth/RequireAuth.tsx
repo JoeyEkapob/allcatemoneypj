@@ -9,7 +9,7 @@ interface MytokenPayload extends JwtPayload {
 
 const RequireAuth: React.FC =  () =>{
    const token = localStorage.getItem('token');
-
+  console.log(token)
 
   if (!token) {
     return <Navigate to="/" replace />;
@@ -35,4 +35,6 @@ const RequireAuth: React.FC =  () =>{
   }
 };
 
-export default RequireAuth;
+export default RequireAuth; 
+// RequireAuth.tsx
+
