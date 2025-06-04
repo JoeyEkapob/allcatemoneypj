@@ -1,40 +1,11 @@
-import React from "react";
-import { Navigate , Outlet } from "react-router";
-import { jwtDecode , JwtPayload } from "jwt-decode";
+import { Navigate, Outlet,useLocation } from 'react-router';
+import { useAuth } from './AuthContext';
 
 
-interface MytokenPayload extends JwtPayload {
-    exp: number
+export default function RequireAuth() {
+  const { user , authLoading } = useAuth();
+  const location = useLocation();
+  if (authLoading) return <div></div>;
+
+  return user ? <Outlet /> : <Navigate to="/" state={{ from: location }} replace />;
 }
-
-const RequireAuth: React.FC =  () =>{
-   const token = localStorage.getItem('token');
-  console.log(token)
-
-  if (!token) {
-    return <Navigate to="/" replace />;
-  }
-
-  try {
-    const decoded = jwtDecode<MytokenPayload>(token);
-    const now = Date.now() / 1000;
-
-
-    if (decoded.exp < now) {
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
-      console.log('token หมดอายุ');
-      return <Navigate to="/" replace />;
-    }
-
-
-    return <Outlet />;
-  } catch (err) {
-    console.log(err)
-    return <Navigate to="/" replace />;
-  }
-};
-
-export default RequireAuth; 
-// RequireAuth.tsx
-

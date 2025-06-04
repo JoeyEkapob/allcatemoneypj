@@ -41,20 +41,22 @@ module.exports ={
             )
           if(userresult.rowCount === 0) {
 
-                return res.status(200).json({  success: false, field: 'username', message:'ไม่พบผู้ใช้งาน'})
+                return res.status(401).json({  field: 'username', message:'อีเมลล์ไม่ถูกต้อง'})
             }
             const user = userresult.rows[0]
+       
             const ismatch = await bcrypt.compare(password,user.password_hash)
 
             if(!ismatch){
-                return res.status(200).json({ success: false, field: 'password',  message: "รหัสผ่านไม่ถูกต้อง" });
+                return res.status(401).json({  field: 'password',  message: "รหัสผ่านไม่ถูกต้อง" });
             }
 
             const token = jwt.sign(
                 {
                     user_id:user.id,
                     username:user.username,
-                    email:user.email
+                    email:user.email,
+                    fullname:user.full_name
                 },
                 process.env.JWT_SECRET,{expiresIn:process.env.JWT_EXPIRES_IN}
             )
@@ -97,8 +99,8 @@ module.exports ={
     },
     getuserprofile: async (req,res) =>{
       const userId = req.user.user_id
-  /*     console.log(userId) 
-      return */
+       console.log(userId) 
+      return 
         try{
                 const user = await pool.query(
                 `SELECT a.id,a.username,p.first_name,p.last_name,a.email ,p.avatar_url , p.bio , c.role_name
@@ -187,5 +189,6 @@ module.exports ={
     });
 
     return res.status(200).json({ message: 'ออกจากระบบเรียบร้อยแล้ว' });
-    }
+    },
+
 }

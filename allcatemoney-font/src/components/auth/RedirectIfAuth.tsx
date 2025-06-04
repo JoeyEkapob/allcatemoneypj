@@ -1,34 +1,12 @@
-import { jwtDecode } from "jwt-decode";
-import { Navigate,Outlet, replace } from "react-router";
-import Cookies from 'js-cookie';
+import { Navigate, Outlet ,useLocation} from 'react-router';
+import { useAuth } from './AuthContext';
 
-interface MytokenPayload{
-    exp:number
+export default function RedirectIfAuthenticated() {
+  const { user, authLoading } = useAuth();
+  const location = useLocation();
+  const from = location.state?.from?.pathname || '/home';
+console.log(from)
+  if (authLoading) return null; // หรือ loading spinner
+
+  return user ? <Navigate to={from} replace /> : <Outlet />;
 }
-
-const RedirectIfAuth: React.FC = () => {
-    
-   console.log('token from cookie:', Cookies.get('token'));
-   const token = Cookies.get('token')
-
-    if(token){
-        try{
-        const decode = jwtDecode<MytokenPayload>(token)
-        const now = Date.now() / 1000
-
-        if( decode.exp > now){
-            return <Navigate to='/home' replace />
-        }else{
-            localStorage.removeItem('token')
-            localStorage.removeItem('user')
-        }
-        }catch{
-            localStorage.removeItem('token')
-            localStorage.removeItem('user')
-        }
-       
-    }
-    
-    return <Outlet />
-}
-export default RedirectIfAuth;

@@ -1,10 +1,12 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState  } from "react";
 import { Link } from "react-router";
 import { EyeCloseIcon, EyeIcon } from "../../icons";
 import { jwtDecode  , JwtPayload } from "jwt-decode";
-import { useNavigate } from "react-router";
+import { useNavigate ,useLocation } from "react-router";
 import { useLoading } from '../../context/LoadingContext';
 import { useAuth } from '../auth/AuthContext';
+import Swal from 'sweetalert2'
+
 
 import Label from "../form/Label";
 import Input from "../form/input/InputField";
@@ -25,6 +27,11 @@ export default function SignInForm() {
   const {showLoading, hideLoading } = useLoading();
   const navigate = useNavigate()
   const newErrors: { username?: string; password?: string } = {};
+  const location = useLocation();
+  const from = location.state?.from?.pathname || '/home';
+  /* console.log(location.state?.from?.pathname) */
+
+
 
 
 
@@ -46,20 +53,40 @@ const handleSubmit = async (e:React.FormEvent) => {
   
   if(!vaildate())  return ; 
     try{
+  
       showLoading();
       await login(username,password)
       hideLoading();
-      navigate('/home',{replace:true})
+      navigate('/res', { replace: true }); 
       
     }catch(err :any){
       if (err.field === 'username') {
-        
+
+          Swal.fire({
+          icon: 'error',
+          title: err.field ,
+          text: err.message,
+          timer: 2000,
+        });
         newErrors.username = err.message;
         hideLoading();
       } else if (err.field === 'password') {
+           Swal.fire({
+          icon: 'error',
+          title: err.field ,
+          text: err.message,
+          timer: 2000,
+        });
+        
         newErrors.password = err.message;
         hideLoading();
       } else {
+           Swal.fire({
+          icon: 'error',
+          title: err.field || 'เกิดข้อผิดพลาด' ,
+
+          timer: 2000,
+        });
         newErrors.username = 'เกิดข้อผิดพลาด';
         hideLoading();
       }

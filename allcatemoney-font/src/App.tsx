@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router";
+import {  Routes, Route } from "react-router";
 import SignIn from "./pages/AuthPages/SignIn";
 import SignUp from "./pages/AuthPages/SignUp";
 import NotFound from "./pages/OtherPage/NotFound";
@@ -25,11 +25,12 @@ import RedirectIfAuth from "./components/auth/RedirectIfAuth";
 export default function App() {
   return (
     <>
-      <Router>
+ 
         <ScrollToTop />
         <Routes>
           {/* Dashboard Layout */}
-          
+            <Route element={<RequireAuth />}>
+            
             <Route element={<AppLayout />}>
               <Route index path="/home" element={<Home />} />
               {/* Others Page */}
@@ -55,18 +56,21 @@ export default function App() {
               <Route path="/line-chart" element={<LineChart />} />
               <Route path="/bar-chart" element={<BarChart />} />
             </Route>
-     
+            </Route>
+   
 
           {/* Auth Layout */}
+            <Route element={<RedirectIfAuth />}>
         
             <Route path="/" element={<SignIn />} />
             <Route path="/signup" element={<SignUp />} />
+            </Route>
           
 
           {/* Fallback Route */}
           <Route path="*" element={<NotFound />} />
+     
         </Routes>
-      </Router>
     </>
   );
 }

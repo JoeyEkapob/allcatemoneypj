@@ -28,6 +28,10 @@ app.post('/register',(req,res)=>Userscontrollers.register(req,res))
 app.post('/login',(req,res)=>Userscontrollers.login(req,res))
 
 app.use(authMiddleware);
+app.get('/me', authMiddleware, (req, res) => {
+  res.json({ user: req.user });
+});
+
 app.get('/user/profile',Userscontrollers.getuserprofile)
 app.patch('/user/editprofile/:id', Userscontrollers.editprofile)
 app.post('/logout', Userscontrollers.logout);

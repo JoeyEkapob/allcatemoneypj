@@ -35,20 +35,22 @@ export const getUserProfile = async () => {
 
 
     const userresult = await res.json();
-    console.log(userresult.success)
-  
-      /* if(!userresult.success){
+
+   /*  console.log(userresult.message)
+  return */
+
+    if(!userresult.success){
         return {
         field: userresult.field || 'general',
         message: userresult.message || 'เกิดข้อผิดพลาด',
       };
     
       }else{
-        //console.log(data)
+      // console.log(data)
       return  userresult.data as UserProfile
             
       }
- */
+
 
  
 };

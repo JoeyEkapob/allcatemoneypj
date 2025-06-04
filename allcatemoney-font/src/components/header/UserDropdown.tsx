@@ -12,7 +12,6 @@ export default function UserDropdown() {
   const navigate = useNavigate()
 
   const { logout , user } = useAuth();
-
   function toggleDropdown() {
     setIsOpen(!isOpen);
   }
@@ -67,7 +66,7 @@ const handleLogout = () =>{
       >
         <div>
           <span className="block font-medium text-gray-700 text-theme-sm dark:text-gray-400">
-            {user?.full_name}
+            {user?.fullname}
           </span>
           <span className="mt-0.5 block text-theme-xs text-gray-500 dark:text-gray-400">
             {user?.email}

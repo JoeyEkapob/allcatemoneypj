@@ -5,7 +5,8 @@ const authMiddleware = (req, res, next) => {
   
    const token = req.cookies.token;
 
-  if (!token) return res.status(200).json({success:false, message: 'Missing token' });
+
+  if (!token) return res.status(200).json({success:false, message: 'ไม่พบ token' });
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
