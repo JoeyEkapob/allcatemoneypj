@@ -3,7 +3,7 @@ import { loginRequest, User } from '../api/authService';
 import { getUserProfile } from '../api/userService';
 import { useLoading } from '../../context/LoadingContext';
 import { useLocation } from 'react-router';
-
+import { withMinimumLoading } from '../utils/loadingHelper';
 
 interface AuthContextType {
   user: User | null;
@@ -23,41 +23,44 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const location = useLocation();
 
 
-    useEffect(() => {
+/* useEffect(() => {
+  const checkAuth = async () => {
+    setAuthLoading(true);
 
+    await withMinimumLoading(
+      async () => {
+        try {
+          const res = await fetch('http://localhost:5000/me', {
+            credentials: 'include',
+          });
 
-    const checkAuth = async () => {
-  /*     console.log(location.pathname)
-      console.log(authLoading) */
-     setAuthLoading(true); // เริ่มโหลดใหม่
-        showLoading();
+          if (!res.ok) throw new Error('Not authenticated');
 
-      try {
-        const res = await fetch('http://localhost:5000/me', {
-          credentials: 'include', // สำคัญ! เพื่อส่ง cookie ไป
-        });
-
-        if (!res.ok) throw new Error('Not authenticated');
-
-        const data = await res.json();
-        setUser(data.user);
-      } catch (err) {
-        setUser(null); // ไม่มี token หรือหมดอายุ
-      } finally {
-
-        setAuthLoading(false)
-        hideLoading(); // ใช้กับ loading UI
-      }
-    };
-
+          const data = await res.json();
+          setUser(data.user);
+        } catch (err) {
+            setUser(null);
+        } finally {
+          setAuthLoading(false);
+        }
+      },
+      showLoading,
+      hideLoading,
+      500 // โหลดอย่างน้อย 1 วินาที
+    );
+  };
     checkAuth();
-  }, [location.pathname]);
-
+}, [location.pathname]);
+ */
   const login = async (username: string, password: string) => {
     try{  
       const res = await loginRequest(username, password);
       setUser(res.user)
     }catch(err:any){
+      
+      if (process.env.NODE_ENV === 'development') {
+      console.error('Login error context:', err);
+    }
      throw {
         field: err.field || 'general',
         message: err.message || 'เข้าสู่ระบบไม่สำเร็จ',

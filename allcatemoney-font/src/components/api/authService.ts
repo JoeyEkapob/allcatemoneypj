@@ -14,8 +14,11 @@ type AuthErrorThrown = {
   status: number;
   data: Partial<Erruserdata>; 
 };
+
 export const loginRequest = async (username:string ,password:string)=>{
-   try{
+   
+  try{
+
       const response = await fetch('http://localhost:5000/login', {
         method: 'POST',
         credentials: 'include', 
@@ -28,30 +31,32 @@ export const loginRequest = async (username:string ,password:string)=>{
       const data = await response.json();
 
       if (!response.ok) {
-      throw {
+      
+        throw {
         status: response.status,
         data: data
       };
+
     }
-    
 
       return { user : data.user as User}
      
-      //const data = await response.json();
    } catch (err : unknown) {
       const error = err as AuthErrorThrown;
  
      if(error?.status === 401){
           const data = error.data;
+        
         throw {
             field: data.field || 'general',
             message: data.message || 'เกิดข้อผิดพลาด'
         }
     
-      }else{
-
-         console.error('Login error:', err); // ดู error message ตรงนี้
       }
+       throw {
+      field: 'general',
+      message: 'เกิดข้อผิดพลาดภายในเซิร์ฟเวอร์',
+    };
 
   }
     

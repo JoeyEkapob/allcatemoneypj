@@ -56,8 +56,14 @@ const handleSubmit = async (e:React.FormEvent) => {
   
       showLoading();
       await login(username,password)
+      Swal.fire({
+        icon:'success',
+        title:'เข้าสู่ระบบสำเร็จ',
+        timer: 20000,
+      })
+
       hideLoading();
-      navigate('/res', { replace: true }); 
+      navigate(from , { replace: true }); 
       
     }catch(err :any){
       if (err.field === 'username') {

@@ -29,7 +29,6 @@ export default function App() {
         <ScrollToTop />
         <Routes>
           {/* Dashboard Layout */}
-            <Route element={<RequireAuth />}>
             
             <Route element={<AppLayout />}>
               <Route index path="/home" element={<Home />} />
@@ -56,15 +55,12 @@ export default function App() {
               <Route path="/line-chart" element={<LineChart />} />
               <Route path="/bar-chart" element={<BarChart />} />
             </Route>
-            </Route>
    
 
           {/* Auth Layout */}
-            <Route element={<RedirectIfAuth />}>
         
             <Route path="/" element={<SignIn />} />
             <Route path="/signup" element={<SignUp />} />
-            </Route>
           
 
           {/* Fallback Route */}

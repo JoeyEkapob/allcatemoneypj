@@ -4,6 +4,7 @@ import { Dropdown } from "../ui/dropdown/Dropdown";
 import {  useNavigate } from "react-router";
 import { useAuth } from "../auth/AuthContext";
 import { useLoading } from "../../context/LoadingContext";
+import Swal from "sweetalert2";
 
 
 export default function UserDropdown() {
@@ -22,6 +23,12 @@ export default function UserDropdown() {
 const handleLogout = () =>{
   showLoading()
    logout()
+
+   Swal.fire({
+    icon:'success',
+    title: 'ออกจากระบบเรียบร้อย',
+    timer: 2000,
+  })
    navigate('/',{replace:true})
    hideLoading()
 

@@ -34,7 +34,7 @@ export const LoadingProvider: React.FC<LoadingProviderProps> = ({ children }) =>
             right: 0,
             bottom: 0,
             backgroundColor: 'rgba(0, 0, 0, 0.5)',
-            zIndex: 99999,
+            zIndex: 99,
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
