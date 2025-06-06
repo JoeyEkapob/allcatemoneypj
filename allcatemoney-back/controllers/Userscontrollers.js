@@ -35,8 +35,9 @@ module.exports = {
     }
   },
   login: async (req, res) => {
-    const { username, password } = req.body;
-
+    const { username, password,isChecked } = req.body;
+  /*   console.log(isChecked)
+    return */
     try {
       if (!username || !password) {
         return res
@@ -78,7 +79,10 @@ module.exports = {
         httpOnly: true,
         secure: process.env.NODE_ENV !== "development",
         sameSite: "Strict",
-        maxAge: 24 * 60 * 60 * 1000, // 1 วัน
+        ...(isChecked ? {maxAge: 7 * 24 * 60 * 60 *1000}:
+          undefined
+        )
+        // 1 วัน
       });
 
       // return console.log(req.headers['user-agent'] || 'unknown')
@@ -100,7 +104,7 @@ module.exports = {
       );
       await pool.query(
         `DELETE FROM user_sessions WHERE user_id = $1;`,
-        [user_id]
+        [user.id]
       );
 
       return res.json({

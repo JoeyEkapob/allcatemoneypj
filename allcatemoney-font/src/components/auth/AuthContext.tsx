@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, ReactNode, useEffect  } from 'react';
-import { loginRequest, User } from '../api/authService';
+import { loginRequest, User ,Erruserdata } from '../api/authService';
 import { getUserProfile } from '../api/userService';
 import { useLoading } from '../../context/LoadingContext';
 import { useLocation } from 'react-router';
@@ -8,7 +8,7 @@ import { withMinimumLoading } from '../utils/loadingHelper';
 interface AuthContextType {
   user: User | null;
   token: string | null;
-  login: (email: string, password: string) => Promise<void>;
+  login: (email: string, password: string, isChecked:boolean) => Promise<void>;
   logout: () => void;
   setUser: (user: User) => void;
   authLoading: boolean
@@ -19,12 +19,13 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [ user, setUser ] = useState<User | null>(null)
   const { showLoading , hideLoading } = useLoading();
-  const [ authLoading, setAuthLoading ] = useState(true)
+  const [ authLoading, setAuthLoading ] = useState(false)
   const location = useLocation();
 
 
-/* useEffect(() => {
+useEffect(() => {
   const checkAuth = async () => {
+    if(authLoading) return
     setAuthLoading(true);
 
     await withMinimumLoading(
@@ -33,13 +34,26 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           const res = await fetch('http://localhost:5000/me', {
             credentials: 'include',
           });
-
-          if (!res.ok) throw new Error('Not authenticated');
-
           const data = await res.json();
+       
+          if (res.status === 401) {
+            // ❌ ไม่ใช่ error → แค่ยังไม่ login
+            setUser(null);
+            return;
+          }
+          if (!res.ok) {
+          
+            // ✅ โยน error เฉพาะกรณีจริง ๆ
+            throw {
+              field: 'token',
+              message: data.message || 'เกิดข้อผิดพลาดไม่ทราบสาเหตุ',
+            };
+          }
+          
           setUser(data.user);
         } catch (err) {
             setUser(null);
+            throw err;
         } finally {
           setAuthLoading(false);
         }
@@ -51,19 +65,21 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
     checkAuth();
 }, [location.pathname]);
- */
-  const login = async (username: string, password: string) => {
+
+
+  const login = async (username: string, password: string , isChecked:boolean) => {
     try{  
-      const res = await loginRequest(username, password);
+      const res = await loginRequest(username, password, isChecked);
       setUser(res.user)
-    }catch(err:any){
+    }catch(err:unknown){
+    const error = err as Erruserdata;
       
       if (process.env.NODE_ENV === 'development') {
-      console.error('Login error context:', err);
+      console.error('Login error context:', error);
     }
      throw {
-        field: err.field || 'general',
-        message: err.message || 'เข้าสู่ระบบไม่สำเร็จ',
+        field: error.field || 'general',
+        message: error.message || 'เข้าสู่ระบบไม่สำเร็จ',
       }; 
     }
   };
@@ -74,8 +90,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         method: 'POST',
         credentials: 'include',
       });
-    /* setUser(null);
-    navigate('/login'); */
+    setUser(null);
     } catch (err) {
       console.error('Logout failed', err);
     }

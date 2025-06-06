@@ -29,7 +29,7 @@ app.post('/login',(req,res)=>Userscontrollers.login(req,res))
 
 app.use(authMiddleware);
 app.get('/me', authMiddleware, (req, res) => {
-  res.json({ user: req.user });
+  return res.json({ user: req.user });
 });
 
 app.get('/user/profile',Userscontrollers.getuserprofile)

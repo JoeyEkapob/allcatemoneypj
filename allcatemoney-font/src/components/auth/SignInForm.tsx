@@ -1,18 +1,16 @@
-import { useEffect, useState  } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router";
 import { EyeCloseIcon, EyeIcon } from "../../icons";
-import { jwtDecode  , JwtPayload } from "jwt-decode";
-import { useNavigate ,useLocation } from "react-router";
-import { useLoading } from '../../context/LoadingContext';
-import { useAuth } from '../auth/AuthContext';
-import Swal from 'sweetalert2'
-
+import { jwtDecode, JwtPayload } from "jwt-decode";
+import { useNavigate, useLocation } from "react-router";
+import { useLoading } from "../../context/LoadingContext";
+import { useAuth } from "../auth/AuthContext";
+import Swal from "sweetalert2";
 
 import Label from "../form/Label";
 import Input from "../form/input/InputField";
 import Checkbox from "../form/input/Checkbox";
 import Button from "../ui/button/Button";
-
 
 export default function SignInForm() {
   const { login } = useAuth();
@@ -24,125 +22,80 @@ export default function SignInForm() {
     username?: string;
     password?: string;
   }>({});
-  const {showLoading, hideLoading } = useLoading();
-  const navigate = useNavigate()
+  const { showLoading, hideLoading } = useLoading();
+  const navigate = useNavigate();
   const newErrors: { username?: string; password?: string } = {};
   const location = useLocation();
-  const from = location.state?.from?.pathname || '/home';
-  /* console.log(location.state?.from?.pathname) */
 
+  const from = location.state?.from?.pathname || "/home";
 
+  const validate  = () => {
+    if (!username.trim()) newErrors.username = "กรุณากรอก ID";
+    if (!password.trim()) newErrors.password = "กรุณากรอกรหัสผ่าน";
 
+    setErrorstext(newErrors);
 
+    return !newErrors.username && !newErrors.password;
+  };
 
-
-
-const vaildate = () => {
-  
-  if(!username.trim()) newErrors.username= "กรุณากรอก ID" ; 
-  if(!password.trim()) newErrors.password= "กรุณากรอกรหัสผ่าน";
-  
-  setErrorstext(newErrors);
-
-  return !newErrors.username && !newErrors.password
-}
-
-const handleSubmit = async (e:React.FormEvent) => {
-  e.preventDefault()
-  
-  
-  if(!vaildate())  return ; 
-    try{
-  
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setErrorstext({})
+    if (!validate ()) return;
+    try {
       showLoading();
-      await login(username,password)
+      await login(username, password ,isChecked);
       Swal.fire({
-        icon:'success',
-        title:'เข้าสู่ระบบสำเร็จ',
-        timer: 20000,
-      })
+         icon: "success",
+          title: "เข้าสู่ระบบสำเร็จ",
+          timer: 1500,
+          showConfirmButton: true,
+      });
 
       hideLoading();
-      navigate(from , { replace: true }); 
-      
-    }catch(err :any){
-      if (err.field === 'username') {
-
-          Swal.fire({
-          icon: 'error',
-          title: err.field ,
+      navigate(from, { replace: true });
+    } catch (err: any) {
+      console.log(err)
+      console.log('r')
+      return
+      if (err.field === "username") {
+        Swal.fire({
+          icon: "error",
+          title: err.field,
           text: err.message,
           timer: 2000,
         });
         newErrors.username = err.message;
         hideLoading();
-      } else if (err.field === 'password') {
-           Swal.fire({
-          icon: 'error',
-          title: err.field ,
+      } else if (err.field === "password") {
+        Swal.fire({
+          icon: "error",
+          title: err.field,
           text: err.message,
           timer: 2000,
         });
-        
+
         newErrors.password = err.message;
         hideLoading();
-      } else {
-           Swal.fire({
-          icon: 'error',
-          title: err.field || 'เกิดข้อผิดพลาด' ,
-
-          timer: 2000,
+      } else if (err.field === "token") {
+          Swal.fire({
+              icon: 'warning',
+              title: err.message ||'Session หมดอายุ',
+              text: 'กรุณาเข้าสู่ระบบใหม่',
+              confirmButtonText: 'ตกลง',
+            });
+      }else {
+        Swal.fire({
+          icon: "error",
+          title: "เกิดข้อผิดพลาด",
+          text: "ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้",
         });
-        newErrors.username = 'เกิดข้อผิดพลาด';
         hideLoading();
+        return
       }
-      setErrorstext({ ...newErrors }); 
-    }
-  /* try{
-    showLoading();
-    const [res] = await Promise.all([fetch("http://localhost:5000/user/login",{
-      method:"POST",
-      headers:{
-        "Content-Type":"application/json",
-      },
-      body: JSON.stringify({username,password}),
-    }),new Promise((resolve)=>setTimeout(resolve,1000)) 
-  ]) 
-     
-    const data = await res.json()
-  
-    if(data.success){
-     localStorage.setItem("token",data.token)
-      hideLoading();
-      // หลัง login สำเร็จ
-      navigate('/home', { replace: true }); // ✅ ลบประวัติ login ออกจาก history
-
-    }else{
-
-      if(data.usernameerror){
-        hideLoading()
-        return newErrors.username = data.usernameerror ; 
-   
       
-      }else if(data.passworderror){
-        hideLoading()
-        return newErrors.password = data.passworderror ; 
-        
-       
-      }else{
-        hideLoading()
-        return newErrors.username = 'error 600',  newErrors.password = 'error 600'
-      }
     }
-  }catch(error){
-      hideLoading();
-      console.error("Login failed", error);
-  } */
-
-
-
-}
-
+  };
 
   return (
     <div className="flex flex-col flex-1">
@@ -162,7 +115,7 @@ const handleSubmit = async (e:React.FormEvent) => {
               เข้าสู่ระบบ
             </h1>
             <p className="text-sm text-gray-500 dark:text-gray-400">
-            กรอกอีเมล์และรหัสผ่านของคุณเพื่อเข้าสู่ระบบ!
+              กรอกอีเมล์และรหัสผ่านของคุณเพื่อเข้าสู่ระบบ!
             </p>
           </div>
           <div>
@@ -194,7 +147,7 @@ const handleSubmit = async (e:React.FormEvent) => {
                 </svg>
                 Sign in with Google
               </button>
-             {/*  <button className="inline-flex items-center justify-center gap-3 py-3 text-sm font-normal text-gray-700 transition-colors bg-gray-100 rounded-lg px-7 hover:bg-gray-200 hover:text-gray-800 dark:bg-white/5 dark:text-white/90 dark:hover:bg-white/10">
+              {/*  <button className="inline-flex items-center justify-center gap-3 py-3 text-sm font-normal text-gray-700 transition-colors bg-gray-100 rounded-lg px-7 hover:bg-gray-200 hover:text-gray-800 dark:bg-white/5 dark:text-white/90 dark:hover:bg-white/10">
                 <svg
                   width="21"
                   className="fill-current"
@@ -224,15 +177,13 @@ const handleSubmit = async (e:React.FormEvent) => {
                   <Label>
                     Email <span className="text-error-500">*</span>{" "}
                   </Label>
-                  <Input 
-                  type="text"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  placeholder="กรุณากรอกอีเมลล์ของคุณ" 
-                  hint={errorstext.username}
-                  error={!!errorstext.username}
-              
-            
+                  <Input
+                    type="text"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    placeholder="กรุณากรอกอีเมลล์ของคุณ"
+                    hint={errorstext.username}
+                    error={!!errorstext.username}
                   />
                 </div>
                 <div>
@@ -242,12 +193,10 @@ const handleSubmit = async (e:React.FormEvent) => {
                   <div className="relative">
                     <Input
                       type={showPassword ? "text" : "password"}
-                      onChange={(e)=> setPassword(e.target.value)}
+                      onChange={(e) => setPassword(e.target.value)}
                       placeholder="กรุณากรอกรหัสผ่านของคุณ"
                       hint={errorstext.password}
                       error={!!errorstext.password}
-
-                        
                     />
                     <span
                       onClick={() => setShowPassword(!showPassword)}
@@ -265,7 +214,7 @@ const handleSubmit = async (e:React.FormEvent) => {
                   <div className="flex items-center gap-3">
                     <Checkbox checked={isChecked} onChange={setIsChecked} />
                     <span className="block font-normal text-gray-700 text-theme-sm dark:text-gray-400">
-                    ให้ฉันอยู่ในระบบต่อไป
+                      ให้ฉันอยู่ในระบบต่อไป
                     </span>
                   </div>
                   <Link
@@ -276,8 +225,8 @@ const handleSubmit = async (e:React.FormEvent) => {
                   </Link>
                 </div>
                 <div>
-                  <Button className="w-full" size="sm">
-                    Sign in
+                  <Button className="w-full" size="sm"  >
+                  เข้าสู่ระบบ
                   </Button>
                 </div>
               </div>
@@ -285,7 +234,7 @@ const handleSubmit = async (e:React.FormEvent) => {
 
             <div className="mt-5">
               <p className="text-sm font-normal text-center text-gray-700 dark:text-gray-400 sm:text-start">
-              ยังไม่มีบัญชี ? {" "}
+                ยังไม่มีบัญชี ?{" "}
                 <Link
                   to="/signup"
                   className="text-brand-500 hover:text-brand-600 dark:text-brand-400"
