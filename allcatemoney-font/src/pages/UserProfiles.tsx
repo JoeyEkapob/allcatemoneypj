@@ -11,17 +11,20 @@ import { useAuth } from "../components/auth/AuthContext";
 
 
 export default function UserProfiles() {
-  const { token } = useAuth();
+  const { user } = useAuth();
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const {showLoading, hideLoading } = useLoading();
-  
-  useEffect(()=>{
+
+
+
+ useEffect(()=>{
    
  const fetchProfile = async () => {
-      if (!token) return;
+      if (!user) return;
       showLoading();
       try{
-        const data = await getUserProfile(token);
+        const data = await getUserProfile();
+        
         setProfile(data)
       }catch(err){
         console.error('โหลด profile ไม่สำเร็จ',err)
@@ -30,7 +33,8 @@ export default function UserProfiles() {
       }
     }
     fetchProfile()
-  },[token])
+  },[user]) 
+ 
 
   return (
     <>

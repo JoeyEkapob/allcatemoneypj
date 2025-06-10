@@ -28,7 +28,7 @@ app.post('/register',(req,res)=>Userscontrollers.register(req,res))
 app.post('/login',(req,res)=>Userscontrollers.login(req,res))
 
 app.use(authMiddleware);
-app.get('/me', authMiddleware, (req, res) => {
+app.get('/me', (req, res) => {
   return res.json({ user: req.user });
 });
 

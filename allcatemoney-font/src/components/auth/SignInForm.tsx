@@ -55,9 +55,6 @@ export default function SignInForm() {
       hideLoading();
       navigate(from, { replace: true });
     } catch (err: any) {
-      console.log(err)
-      console.log('r')
-      return
       if (err.field === "username") {
         Swal.fire({
           icon: "error",
@@ -77,14 +74,7 @@ export default function SignInForm() {
 
         newErrors.password = err.message;
         hideLoading();
-      } else if (err.field === "token") {
-          Swal.fire({
-              icon: 'warning',
-              title: err.message ||'Session หมดอายุ',
-              text: 'กรุณาเข้าสู่ระบบใหม่',
-              confirmButtonText: 'ตกลง',
-            });
-      }else {
+      } else {
         Swal.fire({
           icon: "error",
           title: "เกิดข้อผิดพลาด",

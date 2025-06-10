@@ -4,13 +4,40 @@ import Button from "../ui/button/Button";
 import Input from "../form/input/InputField";
 import Label from "../form/Label";
 import { UserProfile } from "../api/userService";
+import { useState , useEffect} from "react";
 
 type Props = {
 profile: UserProfile | null;
 };
 
-export default function UserMetaCard({profile}:Props) {
+export default function UserMetaCard({ profile }:Props) {
   const { isOpen, openModal, closeModal } = useModal();
+  const [form , setForm] = useState({
+    first_name: profile?.first_name || '',
+    last_name: profile?.last_name || '',
+    email:profile?.email || '',
+    phone_number : profile?.phone_number || '',
+    bio : profile?.bio || '',
+    facebook_address: profile?.facebook_address || '',
+    line_address : profile?.line_address || '',
+    github_address : profile?.github_address || '',
+  })
+
+ useEffect(() => {
+   if(profile){
+     setForm({
+     first_name: profile?.first_name || '',
+     last_name: profile?.last_name || '',
+     email:profile?.email || '',
+     phone_number : profile?.phone_number || '',
+     bio : profile?.bio || '',
+     facebook_address: profile?.facebook_address || '',
+     line_address : profile?.line_address || '',
+     github_address : profile?.github_address || '',
+     })
+   }
+ },[profile])
+
   const handleSave = () => {
     // Handle save logic here
     console.log("Saving changes...");
@@ -170,12 +197,15 @@ export default function UserMetaCard({profile}:Props) {
                     <Input
                       type="text"
                       value={profile?.facebook_address}
+                      onChange={(e) => setForm({ ...form , facebook_address:e.target.value})}
                     />
                   </div>
 
                   <div>
                     <Label>Line</Label>
-                    <Input type="text" value={profile?.line_address} />
+                    <Input type="text" value={profile?.line_address} 
+                    onChange={(e) => setForm({ ...form , line_address:e.target.value})}
+                    />
                   </div>
 
                   <div>
@@ -183,6 +213,7 @@ export default function UserMetaCard({profile}:Props) {
                     <Input
                       type="text"
                       value={profile?.github_address}
+                      onChange={(e) => setForm({ ...form, github_address:e.target.value})}
                     />
                   </div>
 
@@ -200,27 +231,37 @@ export default function UserMetaCard({profile}:Props) {
                 <div className="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-2">
                   <div className="col-span-2 lg:col-span-1">
                     <Label>ชื่อ</Label>
-                    <Input type="text" value={profile?.first_name}/>
+                    <Input type="text" 
+                    value={profile?.first_name}
+                    onChange={(e)=> setForm ({ ...form, first_name:e.target.value})}
+                    />
                   </div>
 
                   <div className="col-span-2 lg:col-span-1">
                     <Label>นามสกุล</Label>
-                    <Input type="text" value={profile?.last_name}/>
+                    <Input type="text" value={profile?.last_name} 
+                    onChange={(e)=>setForm({...form, last_name:e.target.value})}
+                    />
                   </div>
 
                   <div className="col-span-2 lg:col-span-1">
                     <Label>อีเมลล์</Label>
-                    <Input type="text" value={profile?.email}/>
+                    <Input type="text" value={profile?.email} 
+                    onChange={(e)=>setForm({...form,email:e.target.value})}
+                    />
                   </div>
 
                   <div className="col-span-2 lg:col-span-1">
                     <Label>โทรศัพท์</Label>
-                    <Input type="text" value={profile?.phone_number} />
+                    <Input type="text" value={profile?.phone_number} 
+                    onChange={(e)=>setForm({...form,phone_number:e.target.value})}/>
                   </div>
 
                   <div className="col-span-2">
                     <Label>ชีวประวัติ</Label>
-                    <Input type="text" value={profile?.bio} />
+                    <Input type="text" value={profile?.bio} 
+                    onChange={(e)=>setForm({...form,bio:e.target.value})}/>
+
                   </div>
                 </div>
               </div>

@@ -4,6 +4,7 @@ import Button from "../ui/button/Button";
 import Input from "../form/input/InputField";
 import Label from "../form/Label";
 import { UserProfile } from "../api/userService";
+import { useEffect, useState } from "react";
 
 type Props = {
 profile: UserProfile | null;
@@ -12,6 +13,23 @@ profile: UserProfile | null;
 
 export default function UserAddressCard({profile}:Props) {
   const { isOpen, openModal, closeModal } = useModal();
+  const [form,setForm] = useState({
+    address_line : profile?.address_line || '',
+    postal_code : profile?.postal_code || '',
+    custom_id : profile?.custom_id || '',
+    country : profile?.country || ''
+
+  })
+  useEffect(()=>{
+    if(profile){
+      setForm({
+        address_line : profile?.address_line || '',
+        postal_code : profile?.postal_code || '',
+        custom_id : profile?.custom_id || '',
+        country : profile?.country || '' 
+      })
+    }
+  },[profile])
   const handleSave = () => {
     // Handle save logic here
     console.log("Saving changes...");
@@ -32,7 +50,7 @@ export default function UserAddressCard({profile}:Props) {
                   ประเทศ
                 </p>
                 <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                  {profile?.country}
+                  {profile?.country || 'ไม่พบข้อมูล'}
                 </p>
               </div>
 
@@ -59,7 +77,7 @@ export default function UserAddressCard({profile}:Props) {
                   TAX ID
                 </p>
                 <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                  {profile?.custom_id}
+                  {profile?.custom_id || 'ไม่พบข้อมูล'}
                 </p>
               </div>
             </div>
@@ -92,42 +110,42 @@ export default function UserAddressCard({profile}:Props) {
         <div className="relative w-full p-4 overflow-y-auto bg-white no-scrollbar rounded-3xl dark:bg-gray-900 lg:p-11">
           <div className="px-2 pr-14">
             <h4 className="mb-2 text-2xl font-semibold text-gray-800 dark:text-white/90">
-              Edit Address
+              แก้ไขที่อยู่
             </h4>
             <p className="mb-6 text-sm text-gray-500 dark:text-gray-400 lg:mb-7">
-              Update your details to keep your profile up-to-date.
+              อัปเดตรายละเอียดของคุณเพื่อให้โปรไฟล์ของคุณเป็นปัจจุบัน
             </p>
           </div>
           <form className="flex flex-col">
             <div className="px-2 overflow-y-auto custom-scrollbar">
               <div className="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-2">
                 <div>
-                  <Label>Country</Label>
-                  <Input type="text" value="United States" />
+                  <Label>ประเทศ</Label>
+                  <Input type="text" value={form.country} onChange={(e)=>setForm({...form,country:e.target.value})}/>
                 </div>
 
                 <div>
-                  <Label>City/State</Label>
-                  <Input type="text" value="Arizona, United States." />
+                  <Label>ที่อยู่</Label>
+                  <Input type="text" value={form.address_line} onChange={(e)=>setForm({...form,address_line:e.target.value})}/>
                 </div>
 
                 <div>
-                  <Label>Postal Code</Label>
-                  <Input type="text" value="ERT 2489" />
+                  <Label>รหัสไปรษณีย์</Label>
+                  <Input type="text" value={form.postal_code} onChange={(e)=>setForm({...form,postal_code:e.target.value})} />
                 </div>
 
                 <div>
-                  <Label>TAX ID</Label>
-                  <Input type="text" value="AS4568384" />
+                  <Label>รหัสสมาชิก</Label>
+                  <Input type="text" value={form.custom_id} onChange={(e) => setForm({...form,custom_id:e.target.value})}/>
                 </div>
               </div>
             </div>
             <div className="flex items-center gap-3 px-2 mt-6 lg:justify-end">
               <Button size="sm" variant="outline" onClick={closeModal}>
-                Close
+                ปิด
               </Button>
               <Button size="sm" onClick={handleSave}>
-                Save Changes
+                บันทึก
               </Button>
             </div>
           </form>

@@ -124,8 +124,8 @@ module.exports = {
   },
   getuserprofile: async (req, res) => {
     const userId = req.user.user_id;
-    console.log(userId);
-    return;
+    /* console.log(userId);
+    return; */
     try {
       const user = await pool.query(
         `SELECT a.id,a.username,p.first_name,p.last_name,a.email ,p.avatar_url , p.bio , c.role_name
@@ -168,18 +168,19 @@ module.exports = {
       github_address,
     } = req.body;
 
-    const client = await pool.connect();
+    console.log(first_name)
+    return
 
     try {
-      await client.query("BEGIN");
+      await pool.query("BEGIN");
 
-      const userupdate = await client.query(
+      const userupdate = await pool.query(
         `UPDATE users SET 
             full_name = $1 , email = $2 WHERE id = $3 RETURNING id ,email, full_name ,username`,
         [`${first_name} ${last_name}`, email, userId]
       );
 
-      const profileupdate = await client.query(
+      const profileupdate = await pool.query(
         `UPDATE user_profiles SET 
                 first_name = $1,
                 last_name = $2,
@@ -209,7 +210,7 @@ module.exports = {
           .json({ success: false, message: "ไม่พบผู้ใช้งาน" });
       }
 
-      await client.query("COMMIT");
+      await pool.query("COMMIT");
 
       return res.status(200).json({
         success: true,
@@ -217,13 +218,13 @@ module.exports = {
         profile: profileupdate.rows[0],
       });
     } catch (e) {
-      await client.query("ROLLBACK");
+      await pool.query("ROLLBACK");
       console.error(e);
       return res
         .status(500)
         .json({ success: false, message: "เกิดข้อผิดพลาดระหว่างอัปเดตข้อมูล" });
     } finally {
-      client.release();
+      pool.release();
     }
   },
   logout: async (req, res) => {

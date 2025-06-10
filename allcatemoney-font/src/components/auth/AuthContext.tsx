@@ -4,10 +4,10 @@ import { getUserProfile } from '../api/userService';
 import { useLoading } from '../../context/LoadingContext';
 import { useLocation } from 'react-router';
 import { withMinimumLoading } from '../utils/loadingHelper';
+import Swal from 'sweetalert2';
 
 interface AuthContextType {
   user: User | null;
-  token: string | null;
   login: (email: string, password: string, isChecked:boolean) => Promise<void>;
   logout: () => void;
   setUser: (user: User) => void;
@@ -37,23 +37,25 @@ useEffect(() => {
           const data = await res.json();
        
           if (res.status === 401) {
-            // ❌ ไม่ใช่ error → แค่ยังไม่ login
             setUser(null);
-            return;
-          }
-          if (!res.ok) {
-          
-            // ✅ โยน error เฉพาะกรณีจริง ๆ
-            throw {
-              field: 'token',
-              message: data.message || 'เกิดข้อผิดพลาดไม่ทราบสาเหตุ',
-            };
+            if(data.type === 'expired'){
+               Swal.fire({
+                  icon: 'warning',
+                  title: data.message ||'Session หมดอายุ',
+                  text: 'กรุณาเข้าสู่ระบบใหม่',
+                  confirmButtonText: 'ตกลง',
+                });
+            }
           }
           
           setUser(data.user);
-        } catch (err) {
+        } catch  {
             setUser(null);
-            throw err;
+            Swal.fire({
+              icon: "error",
+              title: "เกิดข้อผิดพลาด",
+              text: "ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้",
+            });
         } finally {
           setAuthLoading(false);
         }
