@@ -58,11 +58,12 @@ type ProfileUpdatePayload = {
   github_address: string;
 };
 
-export const updateUserProfile = async (
+export const updateminddleUserProfile = async (
   profileData: ProfileUpdatePayload,
   id: string,
 ) => {
-  const res = await fetch(`http://localhost:5000/user/editprofile/${id}`, {
+  try{
+ const res = await fetch(`http://localhost:5000/user/editprofilemiddle/${id}`, {
     method: "PATCH",
     credentials: "include",
     headers: {
@@ -71,7 +72,7 @@ export const updateUserProfile = async (
     body: JSON.stringify(profileData),
   });
   const datareturn = await res.json();
-  console.log(datareturn)
+  //console.log(datareturn)
 
   if (!datareturn.success) {
   
@@ -82,4 +83,11 @@ export const updateUserProfile = async (
     user: datareturn.user as User,
     profile: datareturn.profile as ProfileUpdatePayload,
   };
+  }catch(e){
+     throw {
+      field: "general",
+      message: "เกิดข้อผิดพลาดภายในเซิร์ฟเวอร์",
+    };
+  }
+ 
 };

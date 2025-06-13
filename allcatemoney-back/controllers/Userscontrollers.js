@@ -35,8 +35,8 @@ module.exports = {
     }
   },
   login: async (req, res) => {
-    const { username, password,isChecked } = req.body;
-  /*   console.log(isChecked)
+    const { username, password, isChecked } = req.body;
+    /*   console.log(isChecked)
     return */
     try {
       if (!username || !password) {
@@ -79,9 +79,7 @@ module.exports = {
         httpOnly: true,
         secure: process.env.NODE_ENV !== "development",
         sameSite: "Strict",
-        ...(isChecked ? {maxAge: 7 * 24 * 60 * 60 *1000}:
-          undefined
-        )
+        ...(isChecked ? { maxAge: 7 * 24 * 60 * 60 * 1000 } : undefined),
         // 1 วัน
       });
 
@@ -102,10 +100,9 @@ module.exports = {
         `INSERT INTO user_activity_logs ( user_id, action , details ,created_at ) VALUES ($1,$2,$3,NOW())`,
         [user.id, "login", "User logged in successfully"]
       );
-      await pool.query(
-        `DELETE FROM user_sessions WHERE user_id = $1;`,
-        [user.id]
-      );
+      await pool.query(`DELETE FROM user_sessions WHERE user_id = $1;`, [
+        user.id,
+      ]);
 
       return res.json({
         success: true,
@@ -168,19 +165,20 @@ module.exports = {
       github_address,
     } = req.body;
 
-    console.log(first_name)
-    return
+    /*     console.log(first_name)
+    return */
+    const client = await pool.connect(); // ✅ ขอ connection จาก pool
 
     try {
-      await pool.query("BEGIN");
+      await client.query("BEGIN");
 
-      const userupdate = await pool.query(
+      const userupdate = await client.query(
         `UPDATE users SET 
             full_name = $1 , email = $2 WHERE id = $3 RETURNING id ,email, full_name ,username`,
         [`${first_name} ${last_name}`, email, userId]
       );
 
-      const profileupdate = await pool.query(
+      const profileupdate = await client.query(
         `UPDATE user_profiles SET 
                 first_name = $1,
                 last_name = $2,
@@ -210,7 +208,7 @@ module.exports = {
           .json({ success: false, message: "ไม่พบผู้ใช้งาน" });
       }
 
-      await pool.query("COMMIT");
+      await client.query("COMMIT");
 
       return res.status(200).json({
         success: true,
@@ -218,13 +216,13 @@ module.exports = {
         profile: profileupdate.rows[0],
       });
     } catch (e) {
-      await pool.query("ROLLBACK");
+      await client.query("ROLLBACK");
       console.error(e);
       return res
         .status(500)
         .json({ success: false, message: "เกิดข้อผิดพลาดระหว่างอัปเดตข้อมูล" });
     } finally {
-      pool.release();
+      client.release();
     }
   },
   logout: async (req, res) => {
@@ -235,5 +233,23 @@ module.exports = {
     });
 
     return res.status(200).json({ message: "ออกจากระบบเรียบร้อยแล้ว" });
+  },
+  me: async (req, res) => {
+    try {
+      const userId = req.user.user_id; // อันนี้จาก JWT
+    /*   console.log(userId)
+      return */
+      const user = await pool.query(
+        `SELECT id, email, full_name, username FROM users WHERE id = $1`,
+        [userId]
+      );
+
+      if (user.rows.length === 0)
+        return res.status(404).json({ message: "ไม่พบผู้ใช้" });
+
+     return res.json({ user: user.rows[0] }); // ✅ ดึงจาก DB แล้วส่งกลับ
+    } catch (err) {
+      res.status(500).json({ message: "เกิดข้อผิดพลาด" });
+    }
   },
 };

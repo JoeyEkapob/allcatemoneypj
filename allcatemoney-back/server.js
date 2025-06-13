@@ -28,12 +28,13 @@ app.post('/register',(req,res)=>Userscontrollers.register(req,res))
 app.post('/login',(req,res)=>Userscontrollers.login(req,res))
 
 app.use(authMiddleware);
-app.get('/me', (req, res) => {
+/* app.get('/me', (req, res) => {
   return res.json({ user: req.user });
-});
+}); */
+app.get('/me',Userscontrollers.me)
 
 app.get('/user/profile',Userscontrollers.getuserprofile)
-app.patch('/user/editprofile/:id', Userscontrollers.editprofile)
+app.patch('/user/editprofilemiddle/:id', Userscontrollers.editprofile)
 app.post('/logout', Userscontrollers.logout);
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

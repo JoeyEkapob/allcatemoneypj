@@ -6,7 +6,8 @@ export default function RedirectIfAuthenticated() {
   const location = useLocation();
   const from = location.state?.from?.pathname || '/home';
 //console.log(from)
-  if (authLoading) return null; // หรือ loading spinner
+  if (authLoading) return //console.log('err ifauth'); // หรือ loading spinner
+/*   console.log('1') */
 
   return user ? <Navigate to={from} replace /> : <Outlet />;
 }

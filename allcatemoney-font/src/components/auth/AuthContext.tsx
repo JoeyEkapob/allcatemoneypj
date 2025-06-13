@@ -21,20 +21,24 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const { showLoading , hideLoading } = useLoading();
   const [ authLoading, setAuthLoading ] = useState(false)
   const location = useLocation();
-
+/* 
+  console.log(authLoading,'Auth')
+  console.log(user,'Auth') */
 
 useEffect(() => {
   const checkAuth = async () => {
-    if(authLoading) return
+    if(authLoading) return //console.log('err')
     setAuthLoading(true);
-
     await withMinimumLoading(
       async () => {
         try {
           const res = await fetch('http://localhost:5000/me', {
             credentials: 'include',
           });
+          console.log()
+          
           const data = await res.json();
+          //console.log(data)
        
           if (res.status === 401) {
             setUser(null);
@@ -47,7 +51,7 @@ useEffect(() => {
                 });
             }
           }
-          
+         // console.log(data.user)
           setUser(data.user);
         } catch  {
             setUser(null);
@@ -72,7 +76,10 @@ useEffect(() => {
   const login = async (username: string, password: string , isChecked:boolean) => {
     try{  
       const res = await loginRequest(username, password, isChecked);
+      
       setUser(res.user)
+
+
     }catch(err:unknown){
     const error = err as Erruserdata;
       
@@ -102,7 +109,7 @@ useEffect(() => {
 
 
   return (
-    <AuthContext.Provider value={{ user, login, logout , authLoading  }}>
+    <AuthContext.Provider value={{ user, login, logout , authLoading,setUser  }}>
       {children}
     </AuthContext.Provider>
   );

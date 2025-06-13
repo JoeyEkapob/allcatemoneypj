@@ -3,10 +3,11 @@ import { Modal } from "../ui/modal";
 import Button from "../ui/button/Button";
 import Input from "../form/input/InputField";
 import Label from "../form/Label";
-import { updateUserProfile, UserProfile } from "../api/userService";
+import { updateminddleUserProfile, UserProfile } from "../api/userService";
 import { useLoading } from "../../context/LoadingContext";
 import { useEffect, useState } from "react";
 import { useAuth } from "../auth/AuthContext";
+import Swal from "sweetalert2";
 
 type Props = {
 profile: UserProfile | null;
@@ -17,6 +18,14 @@ export default function UserInfoCard({ profile }: Props) {
   const {  setUser }  = useAuth();
   const { isOpen, openModal, closeModal } = useModal();
   const {showLoading , hideLoading} = useLoading()
+  const newError : { first_name : string , last_name : string , email : string , phone_number : string , bio: string, facebook_address : string ,
+    line_address :string , github_address : string 
+   } = {};
+     const [errorstext, setErrorstext] = useState<{
+    username?: string;
+    password?: string;
+  }>({});
+  
   const [form,setForm] = useState({
     first_name: profile?.first_name || '',
     last_name: profile?.last_name || '',
@@ -44,16 +53,40 @@ useEffect(() => {
   }
 },[profile])
 
+  const validateform = () =>{
+    if(!form.first_name ) newError.first_name =  "กรุณากรอกชื่อ";
+    if(!form.last_name ) newError.last_name =  "กรุณากรอกนามสกุล";
+    if(!form.email.includes("@")) {
+      newError.email =  "รูปแบบอีเมลไม่ถูกต้อง"
+    }else if(!form.email){
+      newError.email =  "กรุณากรอกอีเมล";
+    }
+     if (form.phone_number && !/^\d{9,}$/.test(form.phone_number)){
+      newError.phone_number = "เบอร์โทรต้องเป็นตัวเลข 9 หลักขึ้นไป"
+     }
+      if(!form.facebook_address ) newError.facebook_address =  "กรุณากรอกลิงค์ Facebook ";
+      if(!form.line_address ) newError.line_address =  "กรุณากรอกลิงค์ line";
+      if(!form.github_address ) newError.github_address =  "กรุณากรอกลิงค์ Github";
+    
+
+      setErrorstext(newError)
+  }
+
   const handleSave =  async (e:React.FormEvent) => {
    e.preventDefault()
     if (!profile?.id) return
     showLoading()
     try{
-     const result =  await updateUserProfile(form , profile?.id )
-      setUser(result.user)
-
-   
-    closeModal();
+     const result =  await updateminddleUserProfile(form , profile?.id )
+    setUser(result.user)
+     
+     Swal.fire({
+      icon:"success",
+      title:'บันทึกข้อมูลเสร็จเรียบร้อย',
+      timer:2000,
+      confirmButtonText: 'ตกลง',
+     }) 
+      closeModal();
     }catch(err){
       console.error(err)
     }finally{

@@ -191,7 +191,7 @@ export default function UserMetaCard({ profile }:Props) {
                   ลิงค์โซเชียล
                 </h5>
 
-                <div className="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-2">
+                <div className="grid grid-cols-1 gap-x-6 gap-y-5">
                   <div>
                     <Label>Facebook</Label>
                     <Input

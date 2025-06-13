@@ -24,8 +24,8 @@ export default function UserProfiles() {
       showLoading();
       try{
         const data = await getUserProfile();
-        
         setProfile(data)
+        
       }catch(err){
         console.error('โหลด profile ไม่สำเร็จ',err)
       }finally{
